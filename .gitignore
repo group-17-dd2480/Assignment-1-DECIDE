@@ -22,8 +22,8 @@ build/
 .mtj.tmp/
 
 # Package Files #
-!lib/junit-platform-console-standalone.jar
 *.jar
+!lib/junit-platform-console-standalone.jar
 *.war
 *.nar
 *.ear
