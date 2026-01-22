@@ -1,5 +1,35 @@
 # Assignment-1-DECIDE
 
+
+## Build && Run
+This project uses Java and [JUnit v.1.11.4](https://mvnrepository.com/artifact/org.junit.platform/junit-platform-console-standalone/1.11.4) for testing.
+1. Make sure you have Java installed.
+2. Open terminal and navigate to the project directory.
+3. If you have Make installed
+```bash
+# compiling the program:
+make build
+# running the program:
+make run
+# running the tests:
+make test
+# cleaning the build files:
+make clean
+```
+4. If you don't have Make installed
+```bash
+# compiling the program:
+mkdir -p out
+javac -d out src/*.java
+
+# running the program:
+java -cp out Decide
+
+# running the tests:
+javac -cp lib/junit-platform-console-standalone.jar:out -d out test/*.java
+java -jar lib/junit-platform-console-standalone.jar execute --class-path out --scan-class-path --include-engine junit-jupiter --disable-banner
+```
+
 Compile and run Java, run in terminal
 `javac filename.java && java filename`
 
