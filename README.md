@@ -1,5 +1,8 @@
 # Assignment-1-DECIDE
 
+Compile and run Java, run in terminal
+`javac filename.java && java filename`
+
 ## Goal
 The goal of assignment #1 Download assignment #1is to implement a program according to the modern development techniques. To this extent, the grading focuses more on the software engineering part of the assignment than on the program, see the grading scheme below.
 
