@@ -56,7 +56,19 @@ public class Decide {
 
         double circumradius = (a * b * c) / (4.0 * area);
         return circumradius <= radius;
-}
+} 
+
+    private static double angleVertex(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3){
+        Point2D.Double v1 = new Point2D.Double(p1.x - p2.x, p1.y - p2.y);
+        Point2D.Double v2 = new Point2D.Double(p3.x - p2.x, p3.y - p2.y);
+        double mag1 = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+        double mag2 = Math.sqrt(v2.x * v2.x + v2.y * v2.y); 
+        if (mag1 == 0 || mag2 == 0) 
+            return Double.NaN;
+        double cosineTheta = (v1.x*v2.x+v1.y*v2.y) / (mag1 * mag2);  
+        return Math.acos(cosineTheta);
+    }
+
     // LIC 0 checks if two points are seperated by a distance bigger than length 1
     public static boolean lic0(Point2D.Double[] points, double length1) {
         // Conditions to check for at least two points, and non-negative
@@ -94,6 +106,27 @@ public class Decide {
         return false;
     }
 
+
+    public static boolean lic2(Point2D.Double[] points, double epsilon) {
+        // Checks if three points are given and epsilon is within range
+        if (points == null || points.length < 3) {
+            return false;}
+        if (epsilon < 0 || epsilon > Math.PI) {
+            throw new IllegalArgumentException("Epsilon must be between 0 and pi");
+        } 
+        // Check every triplet of consecutive points i, i+1 and i+2
+        for (int i = 0; i < points.length -2; i++){
+            double angle = angleVertex(points[i], points[i + 1], points[i + 2]);
+            // Skip if angle undefined
+            if (Double.isNaN(angle)) {
+                continue; 
+            }
+            if ((angle < (Math.PI - epsilon)) || angle > (Math.PI + epsilon)){
+                return true;
+            }   
+        }
+        return false;
+    }
     public static void main(String[] args) {
         System.out.println(add(2, 3));
     }
