@@ -1,11 +1,14 @@
 import java.awt.geom.Point2D;
+
 // https://www.geeksforgeeks.org/dsa/minimum-enclosing-circle-using-welzls-algorithm/
 // https://www.geeksforgeeks.org/dsa/check-whether-a-given-point-lies-inside-a-triangle-or-not/
 public class Decide {
 
     /**
-     * @param a first integer
-     * @param b second integer
+     * @param a
+     *            first integer
+     * @param b
+     *            second integer
      * @return the sum of a and b
      */
     public static int add(int a, int b) {
@@ -18,14 +21,14 @@ public class Decide {
         double dy = p1.y - p2.y;
         return dx * dx + dy * dy;
     }
-    
-    // Helper function to calculate area of a triangle by three coordinates, 
-    private static double triangleArea(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3){
+
+    // Helper function to calculate area of a triangle by three coordinates,
+    private static double triangleArea(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
         return 0.5 * Math.abs(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
     }
 
     // Helper function to determine if three points can be contained in a circle of radius R, following Welzl MEC algo
-    private static boolean minRadius(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double radius){
+    private static boolean minRadius(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double radius) {
 
         // Calc the distance between two points and diam to check if the distance between two points is > the diameter if not they cannot fit
         double d12Sq = distSq(p1, p2);
@@ -36,15 +39,15 @@ public class Decide {
         // diamSq = (2R)^2, check if any two points are farther apart than the diam of the circle
         // if so no circle of radius R can contain both at the same time
         if (d12Sq > diamSq || d23Sq > diamSq || d31Sq > diamSq) {
-                return false;
-            }
-        
+            return false;
+        }
+
         // Right or obtuse triangle check: the longest side forms the diameter of the
         // minimum enclosing circle, so containment within the given radius is ensured
         if (d12Sq + d23Sq <= d31Sq || d12Sq + d31Sq <= d23Sq || d23Sq + d31Sq <= d12Sq) {
-        return true; 
+            return true;
         }
-        
+
         // Check if circumradius R = (abc / 4*Area) is less or equal to radius
         double a = Math.sqrt(d12Sq);
         double b = Math.sqrt(d23Sq);
@@ -56,8 +59,9 @@ public class Decide {
 
         double circumradius = (a * b * c) / (4.0 * area);
         return circumradius <= radius;
-}
-    // LIC 0 checks if two points are seperated by a distance bigger than length 1
+    }
+
+    // LIC 0 checks if two points are separated by a distance bigger than length 1
     public static boolean lic0(Point2D.Double[] points, double length1) {
         // Conditions to check for at least two points, and non-negative
         if (points == null || points.length < 2)
@@ -80,16 +84,17 @@ public class Decide {
     public static boolean lic1(Point2D.Double[] points, double radius1) {
         // Checks if three points are given and non negative int
         if (points == null || points.length < 3) {
-            return false;}
+            return false;
+        }
         if (radius1 < 0) {
             throw new IllegalArgumentException("Radius must be bigger than 0");
-        } 
+        }
         // Check every tripplet of concec points i, i+1 and i+2
-        for (int i = 0; i < points.length -2; i++){
+        for (int i = 0; i < points.length - 2; i++) {
             // returns truw if the points CANNOT fit
-            if (!minRadius(points[i], points[i + 1], points[i + 2], radius1)){
+            if (!minRadius(points[i], points[i + 1], points[i + 2], radius1)) {
                 return true;
-            }   
+            }
         }
         return false;
     }
