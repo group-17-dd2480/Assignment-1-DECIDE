@@ -1,6 +1,5 @@
 import java.awt.geom.Point2D;
 
-// https://www.geeksforgeeks.org/dsa/minimum-enclosing-circle-using-welzls-algorithm/
 // https://www.geeksforgeeks.org/dsa/check-whether-a-given-point-lies-inside-a-triangle-or-not/
 public class Decide {
 
@@ -34,24 +33,32 @@ public class Decide {
      * Helper function to calculate area of a triangle by three coordinates
      * 
      * @param p1
+     *            Point 1
      * @param p2
+     *            Point 2
      * @param p3
-     * @return
+     *            Point 3
+     * @return area of the triangle formed from points 1, 2, and 3
      */
     private static double triangleArea(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
         return 0.5 * Math.abs(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
     }
 
-    // Helper function to determine if three points can be contained in a circle of radius R, following Welzl MEC algo
     /**
+     * Helper function to determine if three points can be contained in a circle of radius R, following Welzl MEC algo
+     * https://www.geeksforgeeks.org/dsa/minimum-enclosing-circle-using-welzls-algorithm/
      * 
      * @param p1
+     *            Point 1
      * @param p2
+     *            Point 2
      * @param p3
+     *            Point 3
      * @param radius
-     * @return
+     *            the radius of the circle
+     * @return whether points 1, 2, and 3 can be contained in a circle with radius radius
      */
-    private static boolean minRadius(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double radius) {
+    private static boolean fitInCircle(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double radius) {
 
         // Calc the distance between two points and diam to check if the distance between two points is > the diameter if not they cannot fit
         double d12Sq = distSq(p1, p2);
@@ -129,8 +136,8 @@ public class Decide {
         }
         // Check every tripplet of concec points i, i+1 and i+2
         for (int i = 0; i < points.length - 2; i++) {
-            // returns truw if the points CANNOT fit
-            if (!minRadius(points[i], points[i + 1], points[i + 2], radius1)) {
+            // returns true if the points CANNOT fit
+            if (!fitInCircle(points[i], points[i + 1], points[i + 2], radius1)) {
                 return true;
             }
         }
