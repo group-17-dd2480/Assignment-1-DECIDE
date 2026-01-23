@@ -3,6 +3,41 @@ import java.awt.geom.Point2D;
 // https://www.geeksforgeeks.org/dsa/check-whether-a-given-point-lies-inside-a-triangle-or-not/
 public class Decide {
 
+    static enum CONNECTORS {
+        NOTUSED, ORR, ANDD
+    }
+
+    static enum COMPTYPE {
+        LT, EQ, GT
+    };
+
+    double LENGTH1; // Length in LICs 0, 7, 12
+    double RADIUS1; // Radius in LICs 1, 8, 13
+    double EPSILON; // Deviation from PI in LICs 2, 9
+    double AREA1; // Area in LICs 3, 10, 14
+    int Q_PTS; // No. of consecutive points in LIC 4
+    int QUADS; // No. of quadrants in LIC 4
+    double DIST; // Distance in LIC 6
+    int N_PTS; // No. of consecutive pts. in LIC 6
+    int K_PTS; // No. of int. pts. in LICs 7, 12
+    int A_PTS; // No. of int. pts. in LICs 8, 13
+    int B_PTS; // No. of int. pts. in LICs 8, 13
+    int C_PTS; // No. of int. pts. in LIC 9
+    int D_PTS; // No. of int. pts. in LIC 9
+    int E_PTS; // No. of int. pts. in LICs 10, 14
+    int F_PTS; // No. of int. pts. in LICs 10, 14
+    int G_PTS; // No. of int. pts. in LIC 11
+    double LENGTH2; // Maximum length in LIC 12
+    double RADIUS2; // Maximum radius in LIC 13
+    double AREA2; // Maximum area in LIC 14
+    int NUMPOINTS;
+
+    CONNECTORS[][] LCM2;
+    Point2D.Double[] COORDINATES;
+    boolean[][] PUM;
+    boolean[] CMV, FUV;
+    boolean LAUNCH;
+
     /**
      * @param a
      *            first integer
@@ -23,7 +58,7 @@ public class Decide {
      *            Point 2
      * @return Euclidian distance between points 1 and 2
      */
-    private static double distSq(Point2D.Double p1, Point2D.Double p2) {
+    public static double distSq(Point2D.Double p1, Point2D.Double p2) {
         double dx = p1.x - p2.x;
         double dy = p1.y - p2.y;
         return dx * dx + dy * dy;
@@ -40,7 +75,7 @@ public class Decide {
      *            Point 3
      * @return area of the triangle formed from points 1, 2, and 3
      */
-    private static double triangleArea(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
+    public static double triangleArea(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
         return 0.5 * Math.abs(p1.x * (p2.y - p3.y) + p2.x * (p3.y - p1.y) + p3.x * (p1.y - p2.y));
     }
 
@@ -58,7 +93,7 @@ public class Decide {
      *            the radius of the circle
      * @return whether points 1, 2, and 3 can be contained in a circle with radius radius
      */
-    private static boolean fitInCircle(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double radius) {
+    public static boolean fitInCircle(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3, double radius) {
 
         // Calc the distance between two points and diam to check if the distance between two points is > the diameter if not they cannot fit
         double d12Sq = distSq(p1, p2);
@@ -94,50 +129,42 @@ public class Decide {
     /**
      * LIC 0 checks if two points are separated by a distance bigger than length 1
      * 
-     * @param points
-     *            the list of points
-     * @param length1
-     *            the distance to check
      * @return whether criteria LIC 0 is true or false
      */
-    public static boolean lic0(Point2D.Double[] points, double length1) {
+    public boolean lic0() {
         // Conditions to check for at least two points, and non-negative
-        if (points == null || points.length < 2)
+        if (COORDINATES == null || COORDINATES.length < 2)
             return false;
-        if (length1 < 0)
+        if (LENGTH1 < 0)
             throw new IllegalArgumentException("length must be at least 0");
 
         // Compare dx^2 + dy^2 > lim^2
-        double limitSq = length1 * length1;
+        double limitSq = LENGTH1 * LENGTH1;
         // iterate though pair and return true if conditions met
-        for (int i = 1; i < points.length; i++) {
-            if (distSq(points[i - 1], points[i]) > limitSq)
+        for (int i = 1; i < COORDINATES.length; i++) {
+            if (distSq(COORDINATES[i - 1], COORDINATES[i]) > limitSq)
                 return true;
         }
         return false;
     }
 
     /**
-     * LIC 1 checks if there exist one set of three data points that can't be contained within or on a circle of radius1
+     * LIC 1 checks if there exist one set of three data points that can't be contained within or on a circle of RADIUS1
      * 
-     * @param points
-     *            the list of points
-     * @param radius1
-     *            the radius for the circle
      * @return whether criteria LIC 1 is true or false
      */
-    public static boolean lic1(Point2D.Double[] points, double radius1) {
+    public boolean lic1() {
         // Checks if three points are given and non negative int
-        if (points == null || points.length < 3) {
+        if (COORDINATES == null || COORDINATES.length < 3) {
             return false;
         }
-        if (radius1 < 0) {
+        if (RADIUS1 < 0) {
             throw new IllegalArgumentException("Radius must be bigger than 0");
         }
         // Check every tripplet of concec points i, i+1 and i+2
-        for (int i = 0; i < points.length - 2; i++) {
+        for (int i = 0; i < COORDINATES.length - 2; i++) {
             // returns true if the points CANNOT fit
-            if (!fitInCircle(points[i], points[i + 1], points[i + 2], radius1)) {
+            if (!fitInCircle(COORDINATES[i], COORDINATES[i + 1], COORDINATES[i + 2], RADIUS1)) {
                 return true;
             }
         }
@@ -147,11 +174,9 @@ public class Decide {
     /**
      * LIC 2 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 2 is true or false
      */
-    public static boolean lic2(Point2D.Double[] points) {
+    public boolean lic2() {
         // todo
         return false;
     }
@@ -159,11 +184,9 @@ public class Decide {
     /**
      * LIC 3 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 3 is true or false
      */
-    public static boolean lic3(Point2D.Double[] points) {
+    public boolean lic3() {
         // todo
         return false;
     }
@@ -171,11 +194,9 @@ public class Decide {
     /**
      * LIC 4 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 4 is true or false
      */
-    public static boolean lic4(Point2D.Double[] points) {
+    public boolean lic4() {
         // todo
         return false;
     }
@@ -183,11 +204,9 @@ public class Decide {
     /**
      * LIC 5 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 5 is true or false
      */
-    public static boolean lic5(Point2D.Double[] points) {
+    public boolean lic5() {
         // todo
         return false;
     }
@@ -195,11 +214,9 @@ public class Decide {
     /**
      * LIC 6 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 6 is true or false
      */
-    public static boolean lic6(Point2D.Double[] points) {
+    public boolean lic6() {
         // todo
         return false;
     }
@@ -207,11 +224,9 @@ public class Decide {
     /**
      * LIC 7 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 7 is true or false
      */
-    public static boolean lic7(Point2D.Double[] points) {
+    public boolean lic7() {
         // todo
         return false;
     }
@@ -219,11 +234,9 @@ public class Decide {
     /**
      * LIC 8 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 8 is true or false
      */
-    public static boolean lic8(Point2D.Double[] points) {
+    public boolean lic8() {
         // todo
         return false;
     }
@@ -231,11 +244,9 @@ public class Decide {
     /**
      * LIC 9 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 9 is true or false
      */
-    public static boolean lic9(Point2D.Double[] points) {
+    public boolean lic9() {
         // todo
         return false;
     }
@@ -243,11 +254,9 @@ public class Decide {
     /**
      * LIC 10 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 10 is true or false
      */
-    public static boolean lic10(Point2D.Double[] points) {
+    public boolean lic10() {
         // todo
         return false;
     }
@@ -255,11 +264,9 @@ public class Decide {
     /**
      * LIC 11 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 11 is true or false
      */
-    public static boolean lic11(Point2D.Double[] points) {
+    public boolean lic11() {
         // todo
         return false;
     }
@@ -267,11 +274,9 @@ public class Decide {
     /**
      * LIC 12 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 12 is true or false
      */
-    public static boolean lic12(Point2D.Double[] points) {
+    public boolean lic12() {
         // todo
         return false;
     }
@@ -279,11 +284,9 @@ public class Decide {
     /**
      * LIC 13 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 13 is true or false
      */
-    public static boolean lic13(Point2D.Double[] points) {
+    public boolean lic13() {
         // todo
         return false;
     }
@@ -291,16 +294,23 @@ public class Decide {
     /**
      * LIC 14 checks if
      * 
-     * @param points
-     *            the list of points
      * @return whether criteria LIC 14 is true or false
      */
-    public static boolean lic14(Point2D.Double[] points) {
+    public boolean lic14() {
         // todo
         return false;
     }
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
+        Decide decideProblem = new Decide();
+    }
+
+    public void Decide() {
+        LCM2 = new CONNECTORS[15][15];
+        COORDINATES = new Point2D.Double[100];
+        PUM = new boolean[15][15];
+        CMV = new boolean[15];
+        FUV = new boolean[15];
     }
 }
