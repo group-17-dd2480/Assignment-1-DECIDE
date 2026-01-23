@@ -99,6 +99,84 @@ public class Decide {
         return false;
     }
 
+    // LIC 2 checks if
+    public static boolean lic2(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 3 checks if
+    public static boolean lic3(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 4 checks if
+    public static boolean lic4(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 5 checks if
+    public static boolean lic5(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 6 checks if
+    public static boolean lic6(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 7 checks if
+    public static boolean lic7(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 8 checks if
+    public static boolean lic8(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 9 checks if
+    public static boolean lic9(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 10 checks if
+    public static boolean lic10(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 11 checks if
+    public static boolean lic11(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 12 checks if
+    public static boolean lic12(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 13 checks if
+    public static boolean lic13(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
+    // LIC 14 checks if
+    public static boolean lic14(Point2D.Double[] points) {
+        // todo
+        return false;
+    }
+
     public static void main(String[] args) {
         System.out.println(add(2, 3));
     }
