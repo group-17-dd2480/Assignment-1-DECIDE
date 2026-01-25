@@ -94,6 +94,22 @@ public class Decide {
         return false;
     }
 
+    public static boolean lic1(Point2D.Double[] points, int n_pts, double dist) {
+        // Checks if three points are given and non negative int
+        if (points == null || points.length < 3) {
+            return false;}
+        if (n_pts < 3 || n_pts > points.length) {
+            throw new IllegalArgumentException("n_pts out of range");
+        } 
+        for (int i = 0; i < points.length -2; i++){
+            // returns truw if the points CANNOT fit
+            if (!minRadius(points[i], points[i + 1], points[i + 2], radius1)){
+                return true;
+            }   
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         System.out.println(add(2, 3));
     }
