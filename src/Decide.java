@@ -8,6 +8,8 @@ public class Decide {
      * @param b second integer
      * @return the sum of a and b
      */
+
+    
     public static int add(int a, int b) {
         return a + b;
     }
@@ -57,6 +59,19 @@ public class Decide {
         double circumradius = (a * b * c) / (4.0 * area);
         return circumradius <= radius;
 }
+
+    private static int quadrant(Point2D.Double p1){
+        double x = p1.x;
+        double y = p1.y;
+        if(x>= 0 && y>=0)
+            return 1;
+        if(x< 0 && y>=0)
+            return 2;
+        if(x<0 && y<0)
+            return 3;
+        return 4;
+    }
+
     // LIC 0 checks if two points are seperated by a distance bigger than length 1
     public static boolean lic0(Point2D.Double[] points, double length1) {
         // Conditions to check for at least two points, and non-negative
@@ -91,6 +106,32 @@ public class Decide {
                 return true;
             }   
         }
+        return false;
+    }
+    public static boolean lic4(Point2D.Double[] points, int q_pts, int quads, int NUMPOINTS) {
+        if (q_pts < 2 || q_pts > NUMPOINTS) {
+            throw new IllegalArgumentException("q_pts not within range");
+        } 
+        if (quads < 1 || quads > 3) {
+            throw new IllegalArgumentException("quads not within range");
+        }
+
+        boolean[] seenQuads = new boolean[4];
+        int distinctCount = 0;
+
+        for (int i = 0; i < points.length - (q_pts-1); i++){
+            for(int j =0; j<q_pts; j++){
+                int quad = quadrant(points[i+j]);
+                if (!seenQuads[quad - 1]) {
+                    seenQuads[quad - 1] = true;
+                    distinctCount++;
+                }
+            } 
+            if(distinctCount > quads){
+                return true;
+            }
+        }
+
         return false;
     }
 
