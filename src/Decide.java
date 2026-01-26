@@ -202,12 +202,19 @@ public class Decide {
     }
 
     /**
-     * LIC 5 checks if
+     * LIC 5 checks if there exists two consecutive points where X[j] - X[i] < 0
      * 
      * @return whether criteria LIC 5 is true or false
      */
     public boolean lic5() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - 1; i++) {
+            if (COORDINATES[i + 1].x - COORDINATES[i].x < 0) {
+                return true;
+            }
+        }
         return false;
     }
 
