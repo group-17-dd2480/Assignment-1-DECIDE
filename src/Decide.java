@@ -74,6 +74,17 @@ public class Decide {
         }
         return false;
     }
+    private static double distPointToLine(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
+        double dx = p1.x - p2.x;
+        double dy = p1.y - p2.y;
+        double den = Math.sqrt(dx * dx + dy * dy);  
+        if (den == 0) {
+            return distSq(p1, p3);
+        }
+        double num = Math.abs(dy * p3.x - dx * p3.y + p2.x * p1.y - p1.x * p2.y);
+        double distance = num / den;
+        return distance*distance;
+    }
 
     // LIC 1 checks if there exist one set of thee data points that cant be contained within or on a circle of radius1
 
@@ -94,18 +105,23 @@ public class Decide {
         return false;
     }
 
-    public static boolean lic1(Point2D.Double[] points, int n_pts, double dist) {
+    public static boolean lic6(Point2D.Double[] points, int n_pts, double dist) {
         // Checks if three points are given and non negative int
         if (points == null || points.length < 3) {
             return false;}
         if (n_pts < 3 || n_pts > points.length) {
-            throw new IllegalArgumentException("n_pts out of range");
+            throw new IllegalArgumentException("n_pts is out of range");
         } 
-        for (int i = 0; i < points.length -2; i++){
-            // returns truw if the points CANNOT fit
-            if (!minRadius(points[i], points[i + 1], points[i + 2], radius1)){
-                return true;
+        if (dist < 0) {
+            throw new IllegalArgumentException("Distance must be non-negative");
+        } 
+        for (int i = 0; i < points.length - (n_pts-1); i++){
+            for(int j =1; j<n_pts-1; j++){
+                if(distPointToLine(points[i], points[i+n_pts-1], points[i+j])>dist*dist){
+                    return true;                  
+                }
             }   
+            
         }
         return false;
     }
