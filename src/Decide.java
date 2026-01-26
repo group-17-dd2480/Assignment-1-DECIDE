@@ -304,6 +304,7 @@ public class Decide {
     public static void main(String[] args) {
         System.out.println(add(2, 3));
         Decide decideProblem = new Decide();
+        decideProblem.Decide();
     }
 
     public void Decide() {
