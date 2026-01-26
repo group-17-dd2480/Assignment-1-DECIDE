@@ -93,6 +93,31 @@ public class Decide {
         }
         return false;
     }
+    public static boolean lic12(Point2D.Double[] points, double length1, double length2, int k_pts) {
+        // Checks if three points are given and non negative int
+        if (points == null || points.length < 3) {
+            return false;}
+        if (length2 < 0) {
+            throw new IllegalArgumentException("length2 must be bigger than 0");
+        } 
+        boolean condLength1 = false;
+        boolean condLength2 = false;
+        for (int i = 0; i < points.length -(k_pts + 1); i++){
+            Point2D.Double p1 = points[i];
+            Point2D.Double p2 = points[i +k_pts +1];
+            if(distSq(p1, p2) > length1 * length1){
+                condLength1 = true;
+            }
+            if(distSq(p1, p2) < length2 * length2){
+                condLength2 = true;
+            }
+            if (condLength1 && condLength2){
+                return true;
+            }
+               
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
