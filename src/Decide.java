@@ -93,6 +93,24 @@ public class Decide {
         }
         return false;
     }
+    public static boolean lic10(Point2D.Double[] points, double area1, int e_pts, int f_pts) {
+        // Checks if three points are given and non negative int
+        if (points == null || points.length < 5) {
+            return false;}
+        if (e_pts < 1 || f_pts < 1 || e_pts + f_pts > points.length - 3) {
+            throw new IllegalArgumentException("Invalid number of points, check e_pts and f_pts values");
+        } 
+        
+        for (int i = 0; i < points.length - (e_pts + f_pts + 2); i++){
+            Point2D.Double p1 = points[i];
+            Point2D.Double p2 = points[i + e_pts + 1];
+            Point2D.Double p3 = points[i + e_pts + f_pts + 2];
+            if (triangleArea(p1, p2, p3) > area1){
+                return true;
+            } 
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
