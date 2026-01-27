@@ -361,7 +361,20 @@ public class Decide {
         }
     }
 
-
+    /**
+     * Issue #23: Create the launch decision from FUV.
+     *
+     * LAUNCH is true iff all entries in FUV are true.
+     */
+    public void setLAUNCH() {
+        for (int i = 0; i < 15; i++) {
+            if (!FUV[i]) {
+                LAUNCH = false;
+                return;
+            }
+        }
+        LAUNCH = true;
+    }
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
