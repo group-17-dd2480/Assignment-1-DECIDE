@@ -315,12 +315,21 @@ public class Decide {
     }
 
     /**
-     * LIC 11 checks if
-     * 
+     * LIC 11 checks if two points separated by G_PTS have X[j] - X[i] < 0 where i < j
+     *
      * @return whether criteria LIC 11 is true or false
      */
     public boolean lic11() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3)
+            return false;
+        if (G_PTS < 1 || G_PTS > COORDINATES.length - 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - G_PTS - 1; i++) {
+            int j = i + G_PTS + 1;
+            if (COORDINATES[j].x - COORDINATES[i].x < 0)
+                return true;
+        }
         return false;
     }
 
