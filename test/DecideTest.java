@@ -123,4 +123,23 @@ public class DecideTest {
             }
         }
     }
+
+    /**
+     * Tests that LAUNCH is true only if all FUV are true, and false otherwise
+     */
+    @Test
+    void decide_launchIsTrueOnlyIfAllFUVTrue() {
+        Decide d = new Decide();
+        d.FUV = new boolean[15];
+        // All true case
+        for (int i = 0; i < 15; i++) {
+            d.FUV[i] = true;
+        }
+        d.FUV[2] = false; // One false case
+        d.setLAUNCH();
+        assertFalse(d.LAUNCH);
+        d.FUV[2] = true; // All true again
+        d.setLAUNCH();
+        assertTrue(d.LAUNCH);
+    }
 }
