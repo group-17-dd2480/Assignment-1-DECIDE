@@ -322,6 +322,28 @@ public class Decide {
         CMV[14] = lic14();
     }
 
+    /**
+     * Issue #21: Create the Preliminary Unlocking Matrix (PUM) from CMV and LCM.
+     *
+     * Rules:
+     *  - NOTUSED => true
+     *  - ANDD    => CMV[i] && CMV[j]
+     *  - ORR     => CMV[i] || CMV[j]
+     */
+    public void setPUM() {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                CONNECTORS c = LCM2[i][j];
+                switch (c) {
+                    case NOTUSED -> PUM[i][j] = true;
+                    case ANDD -> PUM[i][j] = CMV[i] && CMV[j];
+                    case ORR -> PUM[i][j] = CMV[i] || CMV[j];
+                }
+            }
+        }
+    }
+
+
     public static void main(String[] args) {
         System.out.println(add(2, 3));
         Decide decideProblem = new Decide();
