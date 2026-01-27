@@ -345,13 +345,39 @@ public class Decide {
     }
 
     /**
-     * LIC 14 checks if
-     * 
+     * LIC 14 checks if three points separated by E_PTS and F_PTS form triangle with area > AREA1 AND area < AREA2
+     *
      * @return whether criteria LIC 14 is true or false
      */
     public boolean lic14() {
-        // todo
-        return false;
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (AREA1 < 0 || AREA2 < 0)
+            throw new IllegalArgumentException("area values must be >= 0");
+        if (E_PTS < 1 || F_PTS < 1)
+            throw new IllegalArgumentException("E_PTS and F_PTS must be >= 1");
+        if (E_PTS + F_PTS > COORDINATES.length - 3)
+            return false;
+
+        boolean fitA1 = false;
+        boolean fitA2 = false;
+
+        for (int i = 0; i < COORDINATES.length - E_PTS - F_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
+
+            double area = triangleArea(p1, p2, p3);
+
+            if (!fitA1 && area > AREA1)
+                fitA1 = true;
+            if (!fitA2 && area < AREA2)
+                fitA2 = true;
+
+            if (fitA1 && fitA2)
+                return true;
+        }
+        return fitA1 && fitA2;
     }
 
     /**
