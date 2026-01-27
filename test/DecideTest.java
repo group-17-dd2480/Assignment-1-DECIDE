@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import java.awt.geom.Point2D;
 
 public class DecideTest {
 
@@ -124,6 +125,70 @@ public class DecideTest {
         }
     }
 
+    /** Contract: LIC 7 returns true when there exist two points separated by exactly K_PTS intervening points that are at a distance greater than LENGTH1.*/
+    @Test
+    void lic7_positiveTest_distanceIsGreater() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(0, 0), // Gap point 1
+            new Point2D.Double(10, 10) 
+        };
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 5.0;
+        assertTrue(decide.lic7());
+    }
+
+    /*Contract: LIC 7 returns false when all points separated by K_PTS  are at a distance less than or equal to LENGTH1.*/
+    @Test
+    void lic7_negativeTest_distanceIsEqual() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(0, 0), // First gap
+            new Point2D.Double(5, 0) 
+        };
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 5.0;
+        assertFalse(decide.lic7());
+    }
+    /* Contract: LIC 8 returns true when three points separated by A_PTS and B_PTS cannot be contained within a circle of RADIUS1.*/
+    @Test
+    void lic8_positiveTest_cannotFitInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(0, 0), // First gap
+            new Point2D.Double(10, 0), 
+            new Point2D.Double(0, 0), // Second gap
+            new Point2D.Double(0, 10)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 1.0;
+        assertTrue(decide.lic8());
+    }
+
+    /**
+     * Contract: LIC 8 returns false when all sets of points separated by 
+     * A_PTS and B_PTS can be contained within a circle of RADIUS1.
+     */
+    @Test
+    void lic8_negativeTest_fitsInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(0, 0), // First gap
+            new Point2D.Double(1, 0), 
+            new Point2D.Double(0, 0), // Second gap
+            new Point2D.Double(0, 1)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 10.0;
+        assertFalse(decide.lic8());
+    }
+
     /**
      * Tests that LAUNCH is true only if all FUV are true, and false otherwise
      */
@@ -142,4 +207,5 @@ public class DecideTest {
         d.setLAUNCH();
         assertTrue(d.LAUNCH);
     }
+    
 }
