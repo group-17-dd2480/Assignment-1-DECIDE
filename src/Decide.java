@@ -136,10 +136,8 @@ public class Decide {
      *            Point 2
      * @param p3
      *            Point 3
-     
      * @return the squared distance from point p3 to the line formed by points p1 and p2
      */
-
     private static double distPointToLine(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
         double dx = p1.x - p2.x;
         double dy = p1.y - p2.y;
@@ -243,15 +241,15 @@ public class Decide {
      * @return whether criteria LIC 6 is true or false
      */
     public boolean lic6() {
-        if (COORDINATES == null || COORDINATES.length < 3 || NUMPOINTS < 3) {
+        if (COORDINATES == null || COORDINATES.length < 3) {
             return false;}
-        if (N_PTS < 3 || N_PTS > NUMPOINTS) {
+        if (N_PTS < 3 || N_PTS > COORDINATES.length) {
             throw new IllegalArgumentException("N_PTS is out of range");
         } 
         if (DIST < 0) {
             throw new IllegalArgumentException("Distance must be non-negative");
         } 
-        for (int i = 0; i < NUMPOINTS - (N_PTS-1); i++){
+        for (int i = 0; i < COORDINATES.length - (N_PTS-1); i++){
             for(int j =1; j<N_PTS-1; j++){
                 if(distPointToLine(COORDINATES[i], COORDINATES[i+N_PTS-1], COORDINATES[i+j]) > DIST*DIST){
                     return true;                  

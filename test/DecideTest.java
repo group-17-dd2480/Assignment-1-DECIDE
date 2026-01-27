@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import java.awt.geom.Point2D;
 
 public class DecideTest {
 
@@ -10,6 +11,61 @@ public class DecideTest {
     void addWorks() {
         assertEquals(5, Decide.add(2, 3));
     }
+
+    /**
+     * Contract: LIC 6 returns true when at least one point in a set of N_PTS
+     * consecutive points lies further than DIST from the line joining first and last points.
+     */
+    @Test
+    void lic6_positiveTest_distanceLarger() {
+        Decide decide = new Decide();
+        decide.N_PTS = 3;
+        decide.DIST = 2.0;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 3),   
+            new Point2D.Double(2, 0),
+            new Point2D.Double(3, 0),
+            new Point2D.Double(4, 0)
+        };
+        assertTrue(decide.lic6());
+    }
+
+    /**
+     * Contract: LIC 6 returns false when all points are within DIST from their lines.
+     */
+
+    @Test
+    void lic6_negativeTest_distanceSmaller() {
+        Decide decide = new Decide();
+        decide.N_PTS = 3;
+        decide.DIST = 2.0;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 1),  
+            new Point2D.Double(2, 0),  
+            new Point2D.Double(3, 0),
+            new Point2D.Double(4, 0)
+        };
+        assertFalse(decide.lic6());
+    }
+    
+    /**
+     * Contract: LIC 6 returns false when there are too few points
+     */
+    @Test
+    void lic6_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.N_PTS = 3;   
+        decide.DIST = 1.0;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 1)   
+        };
+        decide.NUMPOINTS = decide.COORDINATES.length;
+        assertFalse(decide.lic6());
+    }
+
 
     static class setCMVTestDecideStub extends Decide {
         boolean[] ret = new boolean[15];
