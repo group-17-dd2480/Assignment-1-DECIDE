@@ -347,6 +347,81 @@ public class Decide {
         return false;
     }
 
+    /**
+     * Issue #20: Sets the CMV by calling each LIC function
+     */
+    public void setCMV() {
+        CMV[0] = lic0();
+        CMV[1] = lic1();
+        CMV[2] = lic2();
+        CMV[3] = lic3();
+        CMV[4] = lic4();
+        CMV[5] = lic5();
+        CMV[6] = lic6();
+        CMV[7] = lic7();
+        CMV[8] = lic8();
+        CMV[9] = lic9();
+        CMV[10] = lic10();
+        CMV[11] = lic11();
+        CMV[12] = lic12();
+        CMV[13] = lic13();
+        CMV[14] = lic14();
+    }
+
+    /**
+     * Issue #21: Create the Preliminary Unlocking Matrix (PUM) from CMV and LCM.
+     *
+     * Rules:
+     *  - NOTUSED => true
+     *  - ANDD    => CMV[i] && CMV[j]
+     *  - ORR     => CMV[i] || CMV[j]
+     */
+    public void setPUM() {
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                CONNECTORS c = LCM2[i][j];
+                switch (c) {
+                    case NOTUSED -> PUM[i][j] = true;
+                    case ANDD -> PUM[i][j] = CMV[i] && CMV[j];
+                    case ORR -> PUM[i][j] = CMV[i] || CMV[j];
+                }
+            }
+        }
+    }
+
+    /**
+     * Issue #22: Create the Final Unlocking Vector (FUV) from PUM.
+     *
+     * FUV[i] is true iff all PUM[i][j] values are true.
+     */
+    public void setFUV() {
+        for (int i = 0; i < 15; i++) {
+            boolean ok = true;
+            for (int j = 0; j < 15; j++) {
+                if (!PUM[i][j]) {
+                    ok = false;
+                    break;
+                }
+            }
+            FUV[i] = ok;
+        }
+    }
+
+    /**
+     * Issue #23: Create the launch decision from FUV.
+     *
+     * LAUNCH is true iff all entries in FUV are true.
+     */
+    public void setLAUNCH() {
+        for (int i = 0; i < 15; i++) {
+            if (!FUV[i]) {
+                LAUNCH = false;
+                return;
+            }
+        }
+        LAUNCH = true;
+    }
+
     public static void main(String[] args) {
         System.out.println(add(2, 3));
         Decide decideProblem = new Decide();
