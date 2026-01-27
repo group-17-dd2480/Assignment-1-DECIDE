@@ -365,7 +365,7 @@ public class Decide {
             if (fitInR1 && fitInR2)
                 return true;
         }
-        return false;
+        return fitInR1 && fitInR2;
     }
 
     /**
