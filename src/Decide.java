@@ -182,8 +182,7 @@ public class Decide {
     }
 
     /**
-     * LIC 3: Checks if any three consecutive points form a triangle with 
-     * an area greater than AREA1.
+     * LIC 3: Checks if any three points form a triangle with an area greater than AREA1.
      */
     public boolean lic3() {
         if (COORDINATES == null || COORDINATES.length < 3) return false;
@@ -227,8 +226,7 @@ public class Decide {
     }
 
     /**
-     * LIC 7: Checks if two points separated by exactly K_PTS intervening points are farther apart than LENGTH1.
-     */
+     * LIC 7: Checks if two points separated by exactly K_PTS intervening points are farther apart than LENGTH1.*/
     public boolean lic7() {
         if (COORDINATES == null || COORDINATES.length < 3)
             return false;
@@ -244,9 +242,7 @@ public class Decide {
         return false;
     }
 
-    /**
-     * LIC 8: Checks if three points separated by A_PTS and B_PTS intervening points cannot be contained within a circle of radius RADIUS1.
-     */
+    /* LIC 8: Checks if three points separated by A_PTS and B_PTS intervening points cannot be contained within a circle of radius RADIUS1.*/
     public boolean lic8() {
         if (COORDINATES == null || COORDINATES.length < A_PTS + B_PTS + 3)
             return false;
