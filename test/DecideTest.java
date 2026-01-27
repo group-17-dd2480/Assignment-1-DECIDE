@@ -53,5 +53,46 @@ public class DecideTest {
         }
     }
 
+    /** 
+     * Tests that PUM is correctly set based on CMV and LCM2
+     */
+    @Test
+    void setPUM_appliesConnectorsCorrectly() {
+        Decide d = new Decide();
 
+        d.CMV = new boolean[15];
+        d.PUM = new boolean[15][15];
+        d.LCM2 = new Decide.CONNECTORS[15][15];
+
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                d.LCM2[i][j] = Decide.CONNECTORS.NOTUSED;
+            }
+        }
+
+        d.CMV[0] = true;  d.CMV[1] = false; // ANDD => false
+        d.CMV[2] = false; d.CMV[3] = true; // ORR  => true 
+
+        // Set connectors
+        d.LCM2[0][1] = d.LCM2[1][0] = Decide.CONNECTORS.ANDD;
+        d.LCM2[2][3] = d.LCM2[3][2] = Decide.CONNECTORS.ORR;
+
+        d.setPUM();
+
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+
+                if ((i == 0 && j == 1) || (i == 1 && j == 0)) {
+                    assertFalse(d.PUM[i][j]);
+                } else if ((i == 2 && j == 3) || (i == 3 && j == 2)) {
+                    assertTrue(d.PUM[i][j]);
+                } else {
+                // All other entries should be true (NOTUSED)
+                assertTrue(d.PUM[i][j]);
+
+                }
+            }
+        }
+
+    }
 }
