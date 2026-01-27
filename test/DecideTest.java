@@ -1,6 +1,8 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
+import java.awt.geom.Point2D;
+
 public class DecideTest {
 
     /**
@@ -11,25 +13,123 @@ public class DecideTest {
         assertEquals(5, Decide.add(2, 3));
     }
 
-    static class setCMVTestDecideStub extends Decide {
-        boolean[] ret = new boolean[15];
-        @Override public boolean lic0(){ return ret[0]; }
-        @Override public boolean lic1(){ return ret[1]; }
-        @Override public boolean lic2(){ return ret[2]; }
-        @Override public boolean lic3(){ return ret[3]; }
-        @Override public boolean lic4(){ return ret[4]; }
-        @Override public boolean lic5(){ return ret[5]; }
-        @Override public boolean lic6(){ return ret[6]; }
-        @Override public boolean lic7(){ return ret[7]; }
-        @Override public boolean lic8(){ return ret[8]; }
-        @Override public boolean lic9(){ return ret[9]; }
-        @Override public boolean lic10(){ return ret[10]; }
-        @Override public boolean lic11(){ return ret[11]; }
-        @Override public boolean lic12(){ return ret[12]; }
-        @Override public boolean lic13(){ return ret[13]; }
-        @Override public boolean lic14(){ return ret[14]; }
+    /**
+     * Contract: LIC 5 returns true when there exist two consecutive data points
+     * where the second point has a smaller x-coordinate than the first.
+     */
+    @Test
+    void lic5_positiveTest_xDecreases() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(2.0, 2.0),
+                new Point2D.Double(1.0, 1.0)
+        };
+        assertTrue(decide.lic5());
     }
 
+    /**
+     * Contract: LIC 5 returns false when all consecutive data points have
+     * non-decreasing x-coordinates.
+     */
+    @Test
+    void lic5_negativeTest_xNeverDecreases() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(2.0, 2.0),
+                new Point2D.Double(3.0, 3.0)
+        };
+        assertFalse(decide.lic5());
+    }
+
+    /**
+     * Contract: LIC 5 returns false when fewer than two data points are provided.
+     */
+    @Test
+    void lic5_negativeTest_onePoint() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] { new Point2D.Double(1.0, 1.0) };
+        assertFalse(decide.lic5());
+    }
+
+    static class setCMVTestDecideStub extends Decide {
+        boolean[] ret = new boolean[15];
+
+        @Override
+        public boolean lic0() {
+            return ret[0];
+        }
+
+        @Override
+        public boolean lic1() {
+            return ret[1];
+        }
+
+        @Override
+        public boolean lic2() {
+            return ret[2];
+        }
+
+        @Override
+        public boolean lic3() {
+            return ret[3];
+        }
+
+        @Override
+        public boolean lic4() {
+            return ret[4];
+        }
+
+        @Override
+        public boolean lic5() {
+            return ret[5];
+        }
+
+        @Override
+        public boolean lic6() {
+            return ret[6];
+        }
+
+        @Override
+        public boolean lic7() {
+            return ret[7];
+        }
+
+        @Override
+        public boolean lic8() {
+            return ret[8];
+        }
+
+        @Override
+        public boolean lic9() {
+            return ret[9];
+        }
+
+        @Override
+        public boolean lic10() {
+            return ret[10];
+        }
+
+        @Override
+        public boolean lic11() {
+            return ret[11];
+        }
+
+        @Override
+        public boolean lic12() {
+            return ret[12];
+        }
+
+        @Override
+        public boolean lic13() {
+            return ret[13];
+        }
+
+        @Override
+        public boolean lic14() {
+            return ret[14];
+        }
+    }
 
     /**
      * Tests that setCMV correctly maps each LIC functions return value
@@ -39,21 +139,24 @@ public class DecideTest {
     void setCMV_mapsEachLICToSameIndex() {
         setCMVTestDecideStub d = new setCMVTestDecideStub();
         d.CMV = new boolean[15];
-    
-        for (int i = 0; i < 15; i++) d.ret[i] = false;
+
+        for (int i = 0; i < 15; i++)
+            d.ret[i] = false;
         d.setCMV();
-    
+
         int k = 7;
         d.ret[k] = true;
         d.setCMV();
-    
+
         for (int i = 0; i < 15; i++) {
-            if (i == k) assertTrue(d.CMV[i]);
-            else assertFalse(d.CMV[i]);
+            if (i == k)
+                assertTrue(d.CMV[i]);
+            else
+                assertFalse(d.CMV[i]);
         }
     }
 
-    /** 
+    /**
      * Tests that PUM is correctly set based on CMV and LCM2
      */
     @Test
@@ -70,8 +173,10 @@ public class DecideTest {
             }
         }
 
-        d.CMV[0] = true;  d.CMV[1] = false; // ANDD => false
-        d.CMV[2] = false; d.CMV[3] = true; // ORR  => true 
+        d.CMV[0] = true;
+        d.CMV[1] = false; // ANDD => false
+        d.CMV[2] = false;
+        d.CMV[3] = true; // ORR => true
 
         // Set connectors
         d.LCM2[0][1] = d.LCM2[1][0] = Decide.CONNECTORS.ANDD;
@@ -87,8 +192,8 @@ public class DecideTest {
                 } else if ((i == 2 && j == 3) || (i == 3 && j == 2)) {
                     assertTrue(d.PUM[i][j]);
                 } else {
-                // All other entries should be true (NOTUSED)
-                assertTrue(d.PUM[i][j]);
+                    // All other entries should be true (NOTUSED)
+                    assertTrue(d.PUM[i][j]);
 
                 }
             }
