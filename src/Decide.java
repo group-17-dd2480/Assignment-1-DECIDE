@@ -279,14 +279,14 @@ public class Decide {
      * @return whether criteria LIC 12 is true or false
      */
     public boolean lic12() {
-        if (COORDINATES == null || COORDINATES.length < 3 || NUMPOINTS < 3) {
+        if (COORDINATES == null || COORDINATES.length < 3 ) {
             return false;}
         if (LENGTH2 < 0) {
             throw new IllegalArgumentException("length2 must be bigger than 0");
         } 
         boolean condLength1 = false;
         boolean condLength2 = false;
-        for (int i = 0; i < NUMPOINTS -(K_PTS + 1); i++){
+        for (int i = 0; i < COORDINATES.length - (K_PTS + 1); i++){
             Point2D.Double p1 = COORDINATES[i];
             Point2D.Double p2 = COORDINATES[i +K_PTS +1];
             if(distSq(p1, p2) > LENGTH1 * LENGTH1){
