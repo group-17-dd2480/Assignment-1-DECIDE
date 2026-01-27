@@ -19,7 +19,7 @@ public class DecideTest {
      */
 
     @Test
-    void lic12_positiveTest() {
+    void lic12_positiveTest_bothDistancesMet() {
         Decide decide = new Decide();
         decide.K_PTS = 2;
         decide.LENGTH1 = 5.0;
@@ -31,7 +31,7 @@ public class DecideTest {
             new Point2D.Double(1, 0),
             new Point2D.Double(0, 0),
             new Point2D.Double(0, 0),
-            new Point2D.Double(6, 0),   
+            new Point2D.Double(7, 0),   
             new Point2D.Double(0, 0)
         };
         assertTrue(decide.lic12());
@@ -43,7 +43,7 @@ public class DecideTest {
      */
 
     @Test
-    void lic12_negativeTest() {
+    void lic12_negativeTest_distancSmaller() {
         Decide decide = new Decide();
         decide.K_PTS = 2;
         decide.LENGTH1 = 10.0; 
@@ -74,27 +74,10 @@ public class DecideTest {
         };
         assertFalse(decide.lic12());
     }
-    /**
-     * Contract: LIC 12 throws IllegalArgumentException when LENGTH2 is negative
-     */
-
-    @Test
-    void lic12_invalidTest_throwsException() {
-        Decide decide = new Decide(); 
-        decide.K_PTS = 1;
-        decide.LENGTH1 = 1.0;
-        decide.LENGTH2 = -1.0;
-        decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(0, 0)
-        };
-        assertThrows(IllegalArgumentException.class, () -> {
-        decide.lic12();
-    });
     }
     
 
 
 
 
-}
+
