@@ -93,6 +93,34 @@ public class DecideTest {
                 }
             }
         }
+    }
 
+    /**
+     * Tests that FUV is correctly set based on PUM
+     */
+    @Test
+    void setFUV_setsFUVBasedOnPUM() {
+        Decide d = new Decide();
+        d.PUM = new boolean[15][15];
+        d.FUV = new boolean[15];
+        // Set PUM such that:
+        // FUV[0] = true (all true)
+        // FUV[1] = false (one false)
+        for (int j = 0; j < 15; j++) {
+            d.PUM[0][j] = true;
+            d.PUM[1][j] = true;
+        }
+        d.PUM[1][7] = false; // One false entry for row 1
+        d.setFUV();
+        for (int i = 0; i < 15; i++) {
+            if (i == 0) {
+                assertTrue(d.FUV[i]);
+            } else if (i == 1) {
+                assertFalse(d.FUV[i]);
+            } else {
+                // All other FUV entries should be false (empty rows)
+                assertFalse(d.FUV[i]);
+            }
+        }
     }
 }
