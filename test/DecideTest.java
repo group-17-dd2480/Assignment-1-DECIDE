@@ -1,5 +1,6 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import java.awt.geom.Point2D;
 
 public class DecideTest {
 
@@ -10,6 +11,75 @@ public class DecideTest {
     void addWorks() {
         assertEquals(5, Decide.add(2, 3));
     }
+
+    /**
+     * Contract: LIC 10 returns true when there exists at least one set of
+     * three points separated by E_PTS and F_PTS that form a triangle
+     * with area greater than AREA1.
+     */
+
+    @Test
+    void lic10_positiveTest_areaGreater() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),   
+            new Point2D.Double(0, 0),   
+            new Point2D.Double(4, 0),   
+            new Point2D.Double(0, 0),   
+            new Point2D.Double(0, 4)    
+        };
+        assertTrue(decide.lic10());
+    }
+
+    /**
+     * Contract: LIC 10 returns false when no valid triple of points
+     * forms a triangle with area greater than AREA1.
+     */
+    @Test
+    void lic10_negativeTest_areaSmaller() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 10.0;
+
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(1, 0),
+            new Point2D.Double(1, 0),
+            new Point2D.Double(1, 0),
+            new Point2D.Double(1, 0),
+            new Point2D.Double(1, 0)
+        };
+
+        assertFalse(decide.lic10());
+    }
+
+    /**
+     * Contract: LIC 10 returns false when fewer than 5 points are provided.
+     */
+    @Test
+    void lic10_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 0),
+            new Point2D.Double(0, 1),
+            new Point2D.Double(1, 1)
+        };
+
+        assertFalse(decide.lic10());
+    }
+
+
+
+
 
     static class setCMVTestDecideStub extends Decide {
         boolean[] ret = new boolean[15];

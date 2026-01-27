@@ -257,12 +257,12 @@ public class Decide {
      * @return whether criteria LIC 10 is true or false
      */
     public boolean lic10() {
-        if (COORDINATES == null || COORDINATES.length < 5 || NUMPOINTS < 5) {
+        if (COORDINATES == null || COORDINATES.length < 5 ) {
             return false;}
-        if (E_PTS < 1 || F_PTS < 1 || E_PTS + F_PTS > NUMPOINTS - 3) {
+        if (E_PTS < 1 || F_PTS < 1 || E_PTS + F_PTS > COORDINATES.length - 3) {
             throw new IllegalArgumentException("Invalid number of points, check e_pts and f_pts values");
         } 
-        for (int i = 0; i < NUMPOINTS - (E_PTS + F_PTS + 2); i++){
+        for (int i = 0; i < COORDINATES.length - (E_PTS + F_PTS + 2); i++){
             Point2D.Double p1 = COORDINATES[i];
             Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
             Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
