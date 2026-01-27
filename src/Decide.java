@@ -302,7 +302,7 @@ public class Decide {
     }
 
     /**
-     * Sets the CMV by calling each LIC function
+     * Issue #20: Sets the CMV by calling each LIC function
      */
     public void setCMV() {
         CMV[0] = lic0();
@@ -342,6 +342,25 @@ public class Decide {
             }
         }
     }
+
+    /**
+     * Issue #22: Create the Final Unlocking Vector (FUV) from PUM.
+     *
+     * FUV[i] is true iff all PUM[i][j] values are true.
+     */
+    public void setFUV() {
+        for (int i = 0; i < 15; i++) {
+            boolean ok = true;
+            for (int j = 0; j < 15; j++) {
+                if (!PUM[i][j]) {
+                    ok = false;
+                    break;
+                }
+            }
+            FUV[i] = ok;
+        }
+    }
+
 
 
     public static void main(String[] args) {
