@@ -127,10 +127,36 @@ public class Decide {
     }
 
     /**
+     * Helper to calculate angle at vertex formed by p1-vertex-p3 using Law of Cosines
+     * https://www.geeksforgeeks.org/maths/law-of-cosine/
+     *
+     * @param p1
+     *            Point 1
+     * @param vertex
+     *            Vertex point
+     * @param p3
+     *            Point 3
+     * @return angle in radians
+     */
+    private static double calculateAngle(Point2D.Double p1, Point2D.Double vertex, Point2D.Double p3) {
+        double a2 = distSq(vertex, p3);
+        double b2 = distSq(vertex, p1);
+        double c2 = distSq(p1, p3);
+
+        double a = Math.sqrt(a2);
+        double b = Math.sqrt(b2);
+
+        double cosAngle = (a2 + b2 - c2) / (2.0 * a * b);
+        cosAngle = Math.max(-1.0, Math.min(1.0, cosAngle));  // Clamp to [-1, 1]
+        return Math.acos(cosAngle);
+    }
+
+    /**
      * LIC 0 checks if two points are separated by a distance bigger than length 1
      * 
      * @return whether criteria LIC 0 is true or false
      */
+
     public boolean lic0() {
         // Conditions to check for at least two points, and non-negative
         if (COORDINATES == null || COORDINATES.length < 2)
@@ -249,12 +275,32 @@ public class Decide {
     }
 
     /**
-     * LIC 9 checks if
+     * LIC 9 checks if three points separated by C_PTS and D_PTS form an angle outside (PI +- EPSILON)
      * 
      * @return whether criteria LIC 9 is true or false
      */
     public boolean lic9() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (EPSILON < 0 || EPSILON >= Math.PI)
+            throw new IllegalArgumentException("epsilon must be in range [0, PI)");
+        if (C_PTS < 1 || D_PTS < 1)
+            throw new IllegalArgumentException("C_PTS and D_PTS must be >= 1");
+        if (C_PTS + D_PTS > COORDINATES.length - 3)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - C_PTS - D_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double vertex = COORDINATES[i + C_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + C_PTS + D_PTS + 2];
+
+            if ((p1.x == vertex.x && p1.y == vertex.y) || (p3.x == vertex.x && p3.y == vertex.y))
+                continue;
+
+            double angle = calculateAngle(p1, vertex, p3);
+            if (angle < (Math.PI - EPSILON) || angle > (Math.PI + EPSILON))
+                return true;
+        }
         return false;
     }
 
