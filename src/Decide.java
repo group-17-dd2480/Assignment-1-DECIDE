@@ -45,6 +45,8 @@ public class Decide {
      *            second integer
      * @return the sum of a and b
      */
+
+    
     public static int add(int a, int b) {
         return a + b;
     }
@@ -124,7 +126,29 @@ public class Decide {
 
         double circumradius = (a * b * c) / (4.0 * area);
         return circumradius <= radius;
+
+}
+    /**
+     * Helper function to determine the quadrant of a point
+     * 
+     * @param p1
+     *            Point 1
+     * @return The quadrant point 1 is in
+     */
+    private static int quadrant(Point2D.Double p1){
+        double x = p1.x;
+        double y = p1.y;
+        if(x>= 0 && y>=0)
+            return 1;
+        if(x< 0 && y>=0)
+            return 2;
+        if(x<0 && y<0)
+            return 3;
+        return 4;
     }
+
+    // LIC 0 checks if two points are seperated by a distance bigger than length 1
+    
 
     /**
      * Helper to calculate angle at vertex formed by p1-vertex-p3 using Law of Cosines
@@ -196,6 +220,7 @@ public class Decide {
         }
         return false;
     }
+    
 
     /**
      * LIC 2 checks if
@@ -228,12 +253,34 @@ public class Decide {
     }
 
     /**
-     * LIC 4 checks if
+     * LIC 4 checks if there exists at least one set of Q_PTS consecutive points that lie in more than QUADS quadrants
      * 
      * @return whether criteria LIC 4 is true or false
      */
     public boolean lic4() {
-        // todo
+        if (COORDINATES == null|| COORDINATES.length < 2) {
+            return false;
+        }
+        if (Q_PTS < 2 || Q_PTS > COORDINATES.length) {
+            throw new IllegalArgumentException("Q_PTS not within range");
+        } 
+        if (QUADS < 1 || QUADS > 3) {
+            throw new IllegalArgumentException("QUADS not within range");
+        }
+        for (int i = 0; i < COORDINATES.length - (Q_PTS-1); i++){
+            boolean[] seenQuads = new boolean[4];
+            int distinctCount = 0;
+            for(int j =0; j<Q_PTS; j++){
+                int quad = quadrant(COORDINATES[i+j]);
+                if (!seenQuads[quad - 1]) {
+                    seenQuads[quad - 1] = true;
+                    distinctCount++;
+                }
+            } 
+            if(distinctCount > QUADS){
+                return true;
+            }
+        }
         return false;
     }
 
