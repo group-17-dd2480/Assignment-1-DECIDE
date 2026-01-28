@@ -175,6 +175,30 @@ public class Decide {
     }
 
     /**
+     * Helper function to determine the squared distance from point p3 to the line formed by points p1 and p2
+     * https://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
+     * 
+     * @param p1
+     *            Point 1
+     * @param p2
+     *            Point 2
+     * @param p3
+     *            Point 3
+     * @return the squared distance from point p3 to the line formed by points p1 and p2
+     */
+    private static double distPointToLine(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
+        double dx = p1.x - p2.x;
+        double dy = p1.y - p2.y;
+        double den = Math.sqrt(dx * dx + dy * dy);  
+        if (den == 0) {
+            return distSq(p1, p3);
+        }
+        double num = Math.abs(dx * (p1.y - p3.y) - dy * (p1.x - p3.x));
+        double distance = num / den;
+        return distance*distance;
+    }
+
+    /**
      * LIC 0 checks if two points are separated by a distance bigger than length 1
      * 
      * @return whether criteria LIC 0 is true or false
@@ -300,12 +324,26 @@ public class Decide {
     }
 
     /**
-     * LIC 6 checks if
+     * LIC 6 checks if the distance from any of N_PTS consecutive points to the line formed by the first and last point is greater than DIST
      * 
      * @return whether criteria LIC 6 is true or false
      */
     public boolean lic6() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;}
+        if (N_PTS < 3 || N_PTS > COORDINATES.length) {
+            throw new IllegalArgumentException("N_PTS is out of range");
+        } 
+        if (DIST < 0) {
+            throw new IllegalArgumentException("Distance must be non-negative");
+        } 
+        for (int i = 0; i < COORDINATES.length - (N_PTS-1); i++){
+            for(int j =1; j<N_PTS-1; j++){
+                if(distPointToLine(COORDINATES[i], COORDINATES[i+N_PTS-1], COORDINATES[i+j]) > DIST*DIST){
+                    return true;                  
+                }
+            }     
+        }
         return false;
     }
 
@@ -592,6 +630,7 @@ public class Decide {
         }
         LAUNCH = true;
     }
+
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
