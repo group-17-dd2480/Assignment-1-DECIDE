@@ -127,10 +127,36 @@ public class Decide {
     }
 
     /**
+     * Helper to calculate angle at vertex formed by p1-vertex-p3 using Law of Cosines
+     * https://www.geeksforgeeks.org/maths/law-of-cosine/
+     *
+     * @param p1
+     *            Point 1
+     * @param vertex
+     *            Vertex point
+     * @param p3
+     *            Point 3
+     * @return angle in radians
+     */
+    private static double calculateAngle(Point2D.Double p1, Point2D.Double vertex, Point2D.Double p3) {
+        double a2 = distSq(vertex, p3);
+        double b2 = distSq(vertex, p1);
+        double c2 = distSq(p1, p3);
+
+        double a = Math.sqrt(a2);
+        double b = Math.sqrt(b2);
+
+        double cosAngle = (a2 + b2 - c2) / (2.0 * a * b);
+        cosAngle = Math.max(-1.0, Math.min(1.0, cosAngle)); // Clamp to [-1, 1]
+        return Math.acos(cosAngle);
+    }
+
+    /**
      * LIC 0 checks if two points are separated by a distance bigger than length 1
      * 
      * @return whether criteria LIC 0 is true or false
      */
+
     public boolean lic0() {
         // Conditions to check for at least two points, and non-negative
         if (COORDINATES == null || COORDINATES.length < 2)
@@ -183,12 +209,22 @@ public class Decide {
     }
 
     /**
-     * LIC 3 checks if
+     * LIC 3 checks if any three points form a triangle with an area greater than area 1
      * 
      * @return whether criteria LIC 3 is true or false
      */
     public boolean lic3() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (AREA1 < 0) {
+            throw new IllegalArgumentException("Radius must be bigger than 0");
+        }
+        for (int i = 0; i < COORDINATES.length - 2; i++) {
+            double area = triangleArea(COORDINATES[i], COORDINATES[i + 1], COORDINATES[i + 2]);
+            if (area > AREA1)
+                return true;
+        }
         return false;
     }
 
@@ -203,12 +239,19 @@ public class Decide {
     }
 
     /**
-     * LIC 5 checks if
+     * LIC 5 checks if there exists two consecutive points where X[j] - X[i] < 0
      * 
      * @return whether criteria LIC 5 is true or false
      */
     public boolean lic5() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - 1; i++) {
+            if (COORDINATES[i + 1].x - COORDINATES[i].x < 0) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -243,12 +286,32 @@ public class Decide {
     }
 
     /**
-     * LIC 9 checks if
+     * LIC 9 checks if three points separated by C_PTS and D_PTS form an angle outside (PI +- EPSILON)
      * 
      * @return whether criteria LIC 9 is true or false
      */
     public boolean lic9() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (EPSILON < 0 || EPSILON >= Math.PI)
+            throw new IllegalArgumentException("epsilon must be in range [0, PI)");
+        if (C_PTS < 1 || D_PTS < 1)
+            throw new IllegalArgumentException("C_PTS and D_PTS must be >= 1");
+        if (C_PTS + D_PTS > COORDINATES.length - 3)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - C_PTS - D_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double vertex = COORDINATES[i + C_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + C_PTS + D_PTS + 2];
+
+            if ((p1.x == vertex.x && p1.y == vertex.y) || (p3.x == vertex.x && p3.y == vertex.y))
+                continue;
+
+            double angle = calculateAngle(p1, vertex, p3);
+            if (angle < (Math.PI - EPSILON) || angle > (Math.PI + EPSILON))
+                return true;
+        }
         return false;
     }
 
@@ -264,12 +327,21 @@ public class Decide {
     
 
     /**
-     * LIC 11 checks if
-     * 
+     * LIC 11 checks if two points separated by G_PTS have X[j] - X[i] < 0 where i < j
+     *
      * @return whether criteria LIC 11 is true or false
      */
     public boolean lic11() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3)
+            return false;
+        if (G_PTS < 1 || G_PTS > COORDINATES.length - 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - G_PTS - 1; i++) {
+            int j = i + G_PTS + 1;
+            if (COORDINATES[j].x - COORDINATES[i].x < 0)
+                return true;
+        }
         return false;
     }
 
@@ -303,23 +375,73 @@ public class Decide {
     }
 
     /**
-     * LIC 13 checks if
-     * 
+     * LIC 13 checks if three points separated by A_PTS and B_PTS cannot fit in RADIUS1 AND can fit in RADIUS2
+     *
      * @return whether criteria LIC 13 is true or false
      */
     public boolean lic13() {
-        // todo
-        return false;
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (RADIUS1 < 0 || RADIUS2 < 0)
+            throw new IllegalArgumentException("radius values must be >= 0");
+        if (A_PTS < 1 || B_PTS < 1)
+            throw new IllegalArgumentException("A_PTS and B_PTS must be >= 1");
+        if (A_PTS + B_PTS > COORDINATES.length - 3)
+            return false;
+
+        boolean fitInR1 = false;
+        boolean fitInR2 = false;
+
+        for (int i = 0; i < COORDINATES.length - A_PTS - B_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + A_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + A_PTS + B_PTS + 2];
+
+            if (!fitInR1 && !fitInCircle(p1, p2, p3, RADIUS1))
+                fitInR1 = true;
+            if (!fitInR2 && fitInCircle(p1, p2, p3, RADIUS2))
+                fitInR2 = true;
+
+            if (fitInR1 && fitInR2)
+                return true;
+        }
+        return fitInR1 && fitInR2;
     }
 
     /**
-     * LIC 14 checks if
-     * 
+     * LIC 14 checks if three points separated by E_PTS and F_PTS form triangle with area > AREA1 AND area < AREA2
+     *
      * @return whether criteria LIC 14 is true or false
      */
     public boolean lic14() {
-        // todo
-        return false;
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (AREA1 < 0 || AREA2 < 0)
+            throw new IllegalArgumentException("area values must be >= 0");
+        if (E_PTS < 1 || F_PTS < 1)
+            throw new IllegalArgumentException("E_PTS and F_PTS must be >= 1");
+        if (E_PTS + F_PTS > COORDINATES.length - 3)
+            return false;
+
+        boolean fitA1 = false;
+        boolean fitA2 = false;
+
+        for (int i = 0; i < COORDINATES.length - E_PTS - F_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
+
+            double area = triangleArea(p1, p2, p3);
+
+            if (!fitA1 && area > AREA1)
+                fitA1 = true;
+            if (!fitA2 && area < AREA2)
+                fitA2 = true;
+
+            if (fitA1 && fitA2)
+                return true;
+        }
+        return fitA1 && fitA2;
     }
 
     /**
@@ -347,9 +469,9 @@ public class Decide {
      * Issue #21: Create the Preliminary Unlocking Matrix (PUM) from CMV and LCM.
      *
      * Rules:
-     *  - NOTUSED => true
-     *  - ANDD    => CMV[i] && CMV[j]
-     *  - ORR     => CMV[i] || CMV[j]
+     * - NOTUSED => true
+     * - ANDD => CMV[i] && CMV[j]
+     * - ORR => CMV[i] || CMV[j]
      */
     public void setPUM() {
         for (int i = 0; i < 15; i++) {
