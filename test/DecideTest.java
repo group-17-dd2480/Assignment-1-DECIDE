@@ -795,4 +795,36 @@ public class DecideTest {
         assertTrue(d.LAUNCH);
     }
 
+    /**
+     * Tests that decide runs end to end
+     */
+    @Test
+    void decide_runsEndToEnd() {
+        Decide d = new Decide();
+        d.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 0),
+            new Point2D.Double(0, 1),
+            new Point2D.Double(1, 1),
+
+        };
+        d.NUMPOINTS = d.COORDINATES.length;
+        d.Q_PTS = 2;
+        d.QUADS = 1;
+        d.N_PTS = 3; 
+        d.A_PTS = 1; 
+        d.B_PTS = 1;
+        d.C_PTS = 1; 
+        d.D_PTS = 1;
+        d.E_PTS = 1; 
+        d.F_PTS = 1;
+        d.G_PTS = 1;
+        d.K_PTS = 1;
+        d.LENGTH2 = 2.0;
+        d.RADIUS2 = 2.0;
+        d.AREA2   = 2.0;
+        d.decide();
+        assertTrue(d.LAUNCH); // Should be true since all LCM2 are NOTUSED
+    }
+
 }
