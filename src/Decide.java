@@ -133,7 +133,7 @@ public class Decide {
      * 
      * @param p1
      *            Point 1
-     * @return the quadrant of point 1
+     * @return The quadrant point 1 is in
      */
     private static int quadrant(Point2D.Double p1){
         double x = p1.x;
@@ -222,17 +222,16 @@ public class Decide {
      * @return whether criteria LIC 4 is true or false
      */
     public boolean lic4() {
-        if (COORDINATES == null){
+        if (COORDINATES == null|| COORDINATES.length < 2) {
             return false;
         }
-        if (Q_PTS < 2 || Q_PTS > NUMPOINTS) {
+        if (Q_PTS < 2 || Q_PTS > COORDINATES.length) {
             throw new IllegalArgumentException("Q_PTS not within range");
         } 
         if (QUADS < 1 || QUADS > 3) {
             throw new IllegalArgumentException("QUADS not within range");
         }
-        
-        for (int i = 0; i < NUMPOINTS - (Q_PTS-1); i++){
+        for (int i = 0; i < COORDINATES.length - (Q_PTS-1); i++){
             boolean[] seenQuads = new boolean[4];
             int distinctCount = 0;
             for(int j =0; j<Q_PTS; j++){
