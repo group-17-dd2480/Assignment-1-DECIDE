@@ -45,6 +45,7 @@ public class Decide {
      *            second integer
      * @return the sum of a and b
      */
+
     public static int add(int a, int b) {
         return a + b;
     }
@@ -125,10 +126,57 @@ public class Decide {
         double circumradius = (a * b * c) / (4.0 * area);
         return circumradius <= radius;
 
-} 
-/**
-     * Helper function to determine the angle at vertex p2 formed by points p1 and p3
-     * https://www.geeksforgeeks.org/physics/angle-between-two-vectors-formula/
+    }
+
+    /**
+     * Helper function to determine the quadrant of a point
+     * 
+     * @param p1
+     *            Point 1
+     * @return The quadrant point 1 is in
+     */
+    private static int quadrant(Point2D.Double p1) {
+        double x = p1.x;
+        double y = p1.y;
+        if (x >= 0 && y >= 0)
+            return 1;
+        if (x < 0 && y >= 0)
+            return 2;
+        if (x < 0 && y < 0)
+            return 3;
+        return 4;
+    }
+
+    // LIC 0 checks if two points are seperated by a distance bigger than length 1
+
+    /**
+     * Helper to calculate angle at vertex formed by p1-vertex-p3 using Law of Cosines
+     * https://www.geeksforgeeks.org/maths/law-of-cosine/
+     *
+     * @param p1
+     *            Point 1
+     * @param vertex
+     *            Vertex point
+     * @param p3
+     *            Point 3
+     * @return angle in radians
+     */
+    private static double calculateAngle(Point2D.Double p1, Point2D.Double vertex, Point2D.Double p3) {
+        double a2 = distSq(vertex, p3);
+        double b2 = distSq(vertex, p1);
+        double c2 = distSq(p1, p3);
+
+        double a = Math.sqrt(a2);
+        double b = Math.sqrt(b2);
+
+        double cosAngle = (a2 + b2 - c2) / (2.0 * a * b);
+        cosAngle = Math.max(-1.0, Math.min(1.0, cosAngle)); // Clamp to [-1, 1]
+        return Math.acos(cosAngle);
+    }
+
+    /**
+     * Helper function to determine the squared distance from point p3 to the line formed by points p1 and p2
+     * https://mathworld.wolfram.com/Point-LineDistance2-Dimensional.html
      * 
      * @param p1
      *            Point 1
@@ -136,13 +184,35 @@ public class Decide {
      *            Point 2
      * @param p3
      *            Point 3
-     * @return the angle at vertex p2 formed by points p1 and p3
+     *
+     * @return the squared distance from point p3 to the line formed by points p1 and p2
      */
+    private static double distPointToLine(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
+        double dx = p1.x - p2.x;
+        double dy = p1.y - p2.y;
+        double den = Math.sqrt(dx * dx + dy * dy);
+        if (den == 0) {
+            return distSq(p1, p3);
+        }
+        double num = Math.abs(dx * (p1.y - p3.y) - dy * (p1.x - p3.x));
+        double distance = num / den;
+        return distance * distance;
+    }
 
-    private static double angleVertex(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3){
+    /**
+     * @param p1
+     *            Point 1
+     * @param p2
+     *            Point 2
+     * @param p3
+     *            Point 3
+     * @return the angle at vertex p2 formed by points p1 and p3
+     *
+     */
+    private static double angleVertex(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
         double mag1 = distSq(p1, p2);
         double mag2 = distSq(p3, p2);
-        if (mag1 == 0 || mag2 == 0) 
+        if (mag1 == 0 || mag2 == 0)
             return Double.NaN;
         double dot = (p1.x - p2.x) * (p3.x - p2.x) + (p1.y - p2.y) * (p3.y - p2.y);
         double cosineTheta = dot / (Math.sqrt(mag1) * Math.sqrt(mag2));
@@ -150,13 +220,12 @@ public class Decide {
         return Math.acos(cosineTheta);
     }
 
-    
-
     /**
      * LIC 0 checks if two points are separated by a distance bigger than length 1
      * 
      * @return whether criteria LIC 0 is true or false
      */
+
     public boolean lic0() {
 
         // Conditions to check for at least two points, and non-negative
@@ -206,143 +275,326 @@ public class Decide {
     public boolean lic2() {
         // Checks if three points are given and epsilon is within range
         if (COORDINATES == null || COORDINATES.length < 3) {
-            return false;}
+            return false;
+        }
         if (EPSILON < 0 || EPSILON >= Math.PI) {
             throw new IllegalArgumentException("Epsilon must be between 0 and pi");
-        } 
+        }
         // Check every triplet of consecutive points i, i+1 and i+2
-        for (int i = 0; i < COORDINATES .length -2; i++){
+        for (int i = 0; i < COORDINATES.length - 2; i++) {
             double angle = angleVertex(COORDINATES[i], COORDINATES[i + 1], COORDINATES[i + 2]);
             // Skip if angle undefined
             if (Double.isNaN(angle)) {
-                continue; 
+                continue;
             }
-            if ((angle < (Math.PI - EPSILON)) || angle > (Math.PI + EPSILON)){
+            if ((angle < (Math.PI - EPSILON)) || angle > (Math.PI + EPSILON)) {
                 return true;
-            }   
+            }
         }
         return false;
     }
-    
 
     /**
-     * LIC 3 checks if
+     * LIC 3 checks if any three points form a triangle with an area greater than area 1
      * 
      * @return whether criteria LIC 3 is true or false
      */
     public boolean lic3() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (AREA1 < 0) {
+            throw new IllegalArgumentException("Radius must be bigger than 0");
+        }
+        for (int i = 0; i < COORDINATES.length - 2; i++) {
+            double area = triangleArea(COORDINATES[i], COORDINATES[i + 1], COORDINATES[i + 2]);
+            if (area > AREA1)
+                return true;
+        }
         return false;
     }
 
     /**
-     * LIC 4 checks if
+     * LIC 4 checks if there exists at least one set of Q_PTS consecutive points that lie in more than QUADS quadrants
      * 
      * @return whether criteria LIC 4 is true or false
      */
     public boolean lic4() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 2) {
+            return false;
+        }
+        if (Q_PTS < 2 || Q_PTS > COORDINATES.length) {
+            throw new IllegalArgumentException("Q_PTS not within range");
+        }
+        if (QUADS < 1 || QUADS > 3) {
+            throw new IllegalArgumentException("QUADS not within range");
+        }
+        for (int i = 0; i < COORDINATES.length - (Q_PTS - 1); i++) {
+            boolean[] seenQuads = new boolean[4];
+            int distinctCount = 0;
+            for (int j = 0; j < Q_PTS; j++) {
+                int quad = quadrant(COORDINATES[i + j]);
+                if (!seenQuads[quad - 1]) {
+                    seenQuads[quad - 1] = true;
+                    distinctCount++;
+                }
+            }
+            if (distinctCount > QUADS) {
+                return true;
+            }
+        }
         return false;
     }
 
     /**
-     * LIC 5 checks if
+     * LIC 5 checks if there exists two consecutive points where X[j] - X[i] < 0
      * 
      * @return whether criteria LIC 5 is true or false
      */
     public boolean lic5() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - 1; i++) {
+            if (COORDINATES[i + 1].x - COORDINATES[i].x < 0) {
+                return true;
+            }
+        }
         return false;
     }
 
     /**
-     * LIC 6 checks if
+     * LIC 6 checks if the distance from any of N_PTS consecutive points to the line formed by the first and last point is greater than DIST
      * 
      * @return whether criteria LIC 6 is true or false
      */
     public boolean lic6() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (N_PTS < 3 || N_PTS > COORDINATES.length) {
+            throw new IllegalArgumentException("N_PTS is out of range");
+        }
+        if (DIST < 0) {
+            throw new IllegalArgumentException("Distance must be non-negative");
+        }
+        for (int i = 0; i < COORDINATES.length - (N_PTS - 1); i++) {
+            for (int j = 1; j < N_PTS - 1; j++) {
+                if (distPointToLine(COORDINATES[i], COORDINATES[i + N_PTS - 1], COORDINATES[i + j]) > DIST * DIST) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
     /**
-     * LIC 7 checks if
-     * 
-     * @return whether criteria LIC 7 is true or false
+     * LIC 7: Checks if two points separated by exactly K_PTS intervening points are farther apart than LENGTH1.
      */
     public boolean lic7() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3)
+            return false;
+        if (K_PTS < 1 || K_PTS > COORDINATES.length - 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - K_PTS - 1; i++) {
+            // Calculate distance between points separated by K_PTS gap
+            double actualDistSq = distSq(COORDINATES[i], COORDINATES[i + K_PTS + 1]);
+            if (actualDistSq > (LENGTH1 * LENGTH1))
+                return true;
+        }
         return false;
     }
 
-    /**
-     * LIC 8 checks if
-     * 
-     * @return whether criteria LIC 8 is true or false
-     */
+    /* LIC 8: Checks if three points separated by A_PTS and B_PTS intervening points cannot be contained within a circle of radius RADIUS1. */
     public boolean lic8() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < A_PTS + B_PTS + 3)
+            return false;
+        if (A_PTS < 1 || B_PTS < 1)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - (A_PTS + B_PTS + 2); i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + A_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + A_PTS + B_PTS + 2];
+
+            // Returns true if they FAIL to fit in the circle
+            if (!fitInCircle(p1, p2, p3, RADIUS1))
+                return true;
+        }
         return false;
     }
 
     /**
-     * LIC 9 checks if
+     * LIC 9 checks if three points separated by C_PTS and D_PTS form an angle outside (PI +- EPSILON)
      * 
      * @return whether criteria LIC 9 is true or false
      */
     public boolean lic9() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (EPSILON < 0 || EPSILON >= Math.PI)
+            throw new IllegalArgumentException("epsilon must be in range [0, PI)");
+        if (C_PTS < 1 || D_PTS < 1)
+            throw new IllegalArgumentException("C_PTS and D_PTS must be >= 1");
+        if (C_PTS + D_PTS > COORDINATES.length - 3)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - C_PTS - D_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double vertex = COORDINATES[i + C_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + C_PTS + D_PTS + 2];
+
+            if ((p1.x == vertex.x && p1.y == vertex.y) || (p3.x == vertex.x && p3.y == vertex.y))
+                continue;
+
+            double angle = calculateAngle(p1, vertex, p3);
+            if (angle < (Math.PI - EPSILON) || angle > (Math.PI + EPSILON))
+                return true;
+        }
         return false;
     }
 
     /**
-     * LIC 10 checks if
+     * LIC 10 checks if there exists atleast one set of three data points separated by E_PTS and F_PTS points that form a triangle with area greater than AREA1
      * 
      * @return whether criteria LIC 10 is true or false
      */
     public boolean lic10() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 5) {
+            return false;
+        }
+        if (E_PTS < 1 || F_PTS < 1 || E_PTS + F_PTS > COORDINATES.length - 3) {
+            throw new IllegalArgumentException("Invalid number of points, check e_pts and f_pts values");
+        }
+        for (int i = 0; i < COORDINATES.length - (E_PTS + F_PTS + 2); i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
+            if (triangleArea(p1, p2, p3) > AREA1) {
+                return true;
+            }
+        }
         return false;
     }
 
     /**
-     * LIC 11 checks if
-     * 
+     * LIC 11 checks if two points separated by G_PTS have X[j] - X[i] < 0 where i < j
+     *
      * @return whether criteria LIC 11 is true or false
      */
     public boolean lic11() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3)
+            return false;
+        if (G_PTS < 1 || G_PTS > COORDINATES.length - 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - G_PTS - 1; i++) {
+            int j = i + G_PTS + 1;
+            if (COORDINATES[j].x - COORDINATES[i].x < 0)
+                return true;
+        }
         return false;
     }
 
     /**
-     * LIC 12 checks if
+     * LIC 12 checks if there exists two points separated by K_PTS points such that the distance between them is greater than LENGTH1 and less than LENGTH2
      * 
      * @return whether criteria LIC 12 is true or false
      */
     public boolean lic12() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (LENGTH2 < 0) {
+            throw new IllegalArgumentException("length2 must be bigger than 0");
+        }
+        boolean condLength1 = false;
+        boolean condLength2 = false;
+        for (int i = 0; i < COORDINATES.length - (K_PTS + 1); i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + K_PTS + 1];
+            if (distSq(p1, p2) > LENGTH1 * LENGTH1) {
+                condLength1 = true;
+            }
+            if (distSq(p1, p2) < LENGTH2 * LENGTH2) {
+                condLength2 = true;
+            }
+            if (condLength1 && condLength2) {
+                return true;
+            }
+        }
         return false;
     }
 
     /**
-     * LIC 13 checks if
-     * 
+     * LIC 13 checks if three points separated by A_PTS and B_PTS cannot fit in RADIUS1 AND can fit in RADIUS2
+     *
      * @return whether criteria LIC 13 is true or false
      */
     public boolean lic13() {
-        // todo
-        return false;
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (RADIUS1 < 0 || RADIUS2 < 0)
+            throw new IllegalArgumentException("radius values must be >= 0");
+        if (A_PTS < 1 || B_PTS < 1)
+            throw new IllegalArgumentException("A_PTS and B_PTS must be >= 1");
+        if (A_PTS + B_PTS > COORDINATES.length - 3)
+            return false;
+
+        boolean fitInR1 = false;
+        boolean fitInR2 = false;
+
+        for (int i = 0; i < COORDINATES.length - A_PTS - B_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + A_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + A_PTS + B_PTS + 2];
+
+            if (!fitInR1 && !fitInCircle(p1, p2, p3, RADIUS1))
+                fitInR1 = true;
+            if (!fitInR2 && fitInCircle(p1, p2, p3, RADIUS2))
+                fitInR2 = true;
+
+            if (fitInR1 && fitInR2)
+                return true;
+        }
+        return fitInR1 && fitInR2;
     }
 
     /**
-     * LIC 14 checks if
-     * 
+     * LIC 14 checks if three points separated by E_PTS and F_PTS form triangle with area > AREA1 AND area < AREA2
+     *
      * @return whether criteria LIC 14 is true or false
      */
     public boolean lic14() {
-        // todo
-        return false;
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (AREA1 < 0 || AREA2 < 0)
+            throw new IllegalArgumentException("area values must be >= 0");
+        if (E_PTS < 1 || F_PTS < 1)
+            throw new IllegalArgumentException("E_PTS and F_PTS must be >= 1");
+        if (E_PTS + F_PTS > COORDINATES.length - 3)
+            return false;
+
+        boolean fitA1 = false;
+        boolean fitA2 = false;
+
+        for (int i = 0; i < COORDINATES.length - E_PTS - F_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
+
+            double area = triangleArea(p1, p2, p3);
+
+            if (!fitA1 && area > AREA1)
+                fitA1 = true;
+            if (!fitA2 && area < AREA2)
+                fitA2 = true;
+
+            if (fitA1 && fitA2)
+                return true;
+        }
+        return fitA1 && fitA2;
     }
 
     /**
@@ -370,9 +622,9 @@ public class Decide {
      * Issue #21: Create the Preliminary Unlocking Matrix (PUM) from CMV and LCM.
      *
      * Rules:
-     *  - NOTUSED => true
-     *  - ANDD    => CMV[i] && CMV[j]
-     *  - ORR     => CMV[i] || CMV[j]
+     * - NOTUSED => true
+     * - ANDD => CMV[i] && CMV[j]
+     * - ORR => CMV[i] || CMV[j]
      */
     public void setPUM() {
         for (int i = 0; i < 15; i++) {
@@ -419,7 +671,6 @@ public class Decide {
         }
         LAUNCH = true;
     }
-
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
