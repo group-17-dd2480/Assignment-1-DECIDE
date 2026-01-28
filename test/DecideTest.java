@@ -322,14 +322,14 @@ public class DecideTest {
         decide.LENGTH1 = 5.0;
         decide.LENGTH2 = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(0, 0),
-            new Point2D.Double(0, 0),   
-            new Point2D.Double(1, 0),
-            new Point2D.Double(0, 0),
-            new Point2D.Double(0, 0),
-            new Point2D.Double(7, 0),   
-            new Point2D.Double(0, 0)
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(7, 0),
+                new Point2D.Double(0, 0)
         };
         assertTrue(decide.lic12());
     }
@@ -343,14 +343,14 @@ public class DecideTest {
     void lic12_negativeTest_distanceSmaller() {
         Decide decide = new Decide();
         decide.K_PTS = 2;
-        decide.LENGTH1 = 10.0; 
-        decide.LENGTH2 = 2.0;  
+        decide.LENGTH1 = 10.0;
+        decide.LENGTH2 = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(1, 0),
-            new Point2D.Double(0, 0),
-            new Point2D.Double(1, 0),
-            new Point2D.Double(0, 0)
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0)
         };
         assertFalse(decide.lic12());
     }
@@ -361,17 +361,80 @@ public class DecideTest {
 
     @Test
     void lic12_invalidTest_tooFewPoints() {
-        Decide decide = new Decide(); 
+        Decide decide = new Decide();
         decide.K_PTS = 1;
         decide.LENGTH1 = 1.0;
         decide.LENGTH2 = 1.0;
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(0, 0)
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0)
         };
         assertFalse(decide.lic12());
     }
-        static class setCMVTestDecideStub extends Decide {
+
+    static class setCMVTestDecideStub extends Decide {
+        /**
+         * Contract: LIC 10 returns true when there exists at least one set of
+         * three points separated by E_PTS and F_PTS that form a triangle
+         * with area greater than AREA1.
+         */
+
+        @Test
+        void lic10_positiveTest_areaGreater() {
+            Decide decide = new Decide();
+            decide.E_PTS = 1;
+            decide.F_PTS = 1;
+            decide.AREA1 = 1.0;
+            decide.COORDINATES = new Point2D.Double[] {
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(4, 0),
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(0, 4)
+            };
+            assertTrue(decide.lic10());
+        }
+
+        /**
+         * Contract: LIC 10 returns false when no valid triple of points
+         * forms a triangle with area greater than AREA1.
+         */
+        @Test
+        void lic10_negativeTest_areaSmaller() {
+            Decide decide = new Decide();
+            decide.E_PTS = 1;
+            decide.F_PTS = 1;
+            decide.AREA1 = 10.0;
+
+            decide.COORDINATES = new Point2D.Double[] {
+                    new Point2D.Double(1, 1),
+                    new Point2D.Double(1, 1),
+                    new Point2D.Double(-1, 1),
+                    new Point2D.Double(-1, 1),
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(0, 0)
+            };
+
+            assertFalse(decide.lic10());
+        }
+
+        /**
+         * Contract: LIC 10 returns false when fewer than 5 points are provided.
+         */
+        @Test
+        void lic10_invalidTest_tooFewPoints() {
+            Decide decide = new Decide();
+            decide.E_PTS = 1;
+            decide.F_PTS = 1;
+            decide.AREA1 = 1.0;
+
+            decide.COORDINATES = new Point2D.Double[] {
+                    new Point2D.Double(1, 1)
+            };
+
+            assertFalse(decide.lic10());
+        }
+
         boolean[] ret = new boolean[15];
 
         @Override
@@ -548,6 +611,71 @@ public class DecideTest {
         }
     }
 
+    /** Contract: LIC 7 returns true when there exist two points separated by exactly K_PTS intervening points that are at a distance greater than LENGTH1. */
+    @Test
+    void lic7_positiveTest_distanceIsGreater() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // Gap point 1
+                new Point2D.Double(10, 10)
+        };
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 5.0;
+        assertTrue(decide.lic7());
+    }
+
+    /* Contract: LIC 7 returns false when all points separated by K_PTS are at a distance less than or equal to LENGTH1. */
+    @Test
+    void lic7_negativeTest_distanceIsEqual() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // First gap
+                new Point2D.Double(5, 0)
+        };
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 5.0;
+        assertFalse(decide.lic7());
+    }
+
+    /* Contract: LIC 8 returns true when three points separated by A_PTS and B_PTS cannot be contained within a circle of RADIUS1. */
+    @Test
+    void lic8_positiveTest_cannotFitInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // First gap
+                new Point2D.Double(10, 0),
+                new Point2D.Double(0, 0), // Second gap
+                new Point2D.Double(0, 10)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 1.0;
+        assertTrue(decide.lic8());
+    }
+
+    /**
+     * Contract: LIC 8 returns false when all sets of points separated by
+     * A_PTS and B_PTS can be contained within a circle of RADIUS1.
+     */
+    @Test
+    void lic8_negativeTest_fitsInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // First gap
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0), // Second gap
+                new Point2D.Double(0, 1)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 10.0;
+        assertFalse(decide.lic8());
+    }
+
     /**
      * Tests that LAUNCH is true only if all FUV are true, and false otherwise
      */
@@ -566,10 +694,5 @@ public class DecideTest {
         d.setLAUNCH();
         assertTrue(d.LAUNCH);
     }
-    }
-    
 
-
-
-
-
+}

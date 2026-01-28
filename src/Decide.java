@@ -45,6 +45,7 @@ public class Decide {
      *            second integer
      * @return the sum of a and b
      */
+
     public static int add(int a, int b) {
         return a + b;
     }
@@ -124,7 +125,29 @@ public class Decide {
 
         double circumradius = (a * b * c) / (4.0 * area);
         return circumradius <= radius;
+
     }
+
+    /**
+     * Helper function to determine the quadrant of a point
+     * 
+     * @param p1
+     *            Point 1
+     * @return The quadrant point 1 is in
+     */
+    private static int quadrant(Point2D.Double p1) {
+        double x = p1.x;
+        double y = p1.y;
+        if (x >= 0 && y >= 0)
+            return 1;
+        if (x < 0 && y >= 0)
+            return 2;
+        if (x < 0 && y < 0)
+            return 3;
+        return 4;
+    }
+
+    // LIC 0 checks if two points are seperated by a distance bigger than length 1
 
     /**
      * Helper to calculate angle at vertex formed by p1-vertex-p3 using Law of Cosines
@@ -196,7 +219,6 @@ public class Decide {
         }
         return false;
     }
-    
 
     /**
      * LIC 2 checks if
@@ -229,12 +251,34 @@ public class Decide {
     }
 
     /**
-     * LIC 4 checks if
+     * LIC 4 checks if there exists at least one set of Q_PTS consecutive points that lie in more than QUADS quadrants
      * 
      * @return whether criteria LIC 4 is true or false
      */
     public boolean lic4() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 2) {
+            return false;
+        }
+        if (Q_PTS < 2 || Q_PTS > COORDINATES.length) {
+            throw new IllegalArgumentException("Q_PTS not within range");
+        }
+        if (QUADS < 1 || QUADS > 3) {
+            throw new IllegalArgumentException("QUADS not within range");
+        }
+        for (int i = 0; i < COORDINATES.length - (Q_PTS - 1); i++) {
+            boolean[] seenQuads = new boolean[4];
+            int distinctCount = 0;
+            for (int j = 0; j < Q_PTS; j++) {
+                int quad = quadrant(COORDINATES[i + j]);
+                if (!seenQuads[quad - 1]) {
+                    seenQuads[quad - 1] = true;
+                    distinctCount++;
+                }
+            }
+            if (distinctCount > QUADS) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -266,22 +310,39 @@ public class Decide {
     }
 
     /**
-     * LIC 7 checks if
-     * 
-     * @return whether criteria LIC 7 is true or false
+     * LIC 7: Checks if two points separated by exactly K_PTS intervening points are farther apart than LENGTH1.
      */
     public boolean lic7() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3)
+            return false;
+        if (K_PTS < 1 || K_PTS > COORDINATES.length - 2)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - K_PTS - 1; i++) {
+            // Calculate distance between points separated by K_PTS gap
+            double actualDistSq = distSq(COORDINATES[i], COORDINATES[i + K_PTS + 1]);
+            if (actualDistSq > (LENGTH1 * LENGTH1))
+                return true;
+        }
         return false;
     }
 
-    /**
-     * LIC 8 checks if
-     * 
-     * @return whether criteria LIC 8 is true or false
-     */
+    /* LIC 8: Checks if three points separated by A_PTS and B_PTS intervening points cannot be contained within a circle of radius RADIUS1. */
     public boolean lic8() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < A_PTS + B_PTS + 3)
+            return false;
+        if (A_PTS < 1 || B_PTS < 1)
+            return false;
+
+        for (int i = 0; i < COORDINATES.length - (A_PTS + B_PTS + 2); i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + A_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + A_PTS + B_PTS + 2];
+
+            // Returns true if they FAIL to fit in the circle
+            if (!fitInCircle(p1, p2, p3, RADIUS1))
+                return true;
+        }
         return false;
     }
 
@@ -316,15 +377,27 @@ public class Decide {
     }
 
     /**
-     * LIC 10 checks if
+     * LIC 10 checks if there exists atleast one set of three data points separated by E_PTS and F_PTS points that form a triangle with area greater than AREA1
      * 
      * @return whether criteria LIC 10 is true or false
      */
     public boolean lic10() {
-       
+        if (COORDINATES == null || COORDINATES.length < 5) {
+            return false;
+        }
+        if (E_PTS < 1 || F_PTS < 1 || E_PTS + F_PTS > COORDINATES.length - 3) {
+            throw new IllegalArgumentException("Invalid number of points, check e_pts and f_pts values");
+        }
+        for (int i = 0; i < COORDINATES.length - (E_PTS + F_PTS + 2); i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
+            if (triangleArea(p1, p2, p3) > AREA1) {
+                return true;
+            }
+        }
         return false;
-       }
-    
+    }
 
     /**
      * LIC 11 checks if two points separated by G_PTS have X[j] - X[i] < 0 where i < j
@@ -351,25 +424,26 @@ public class Decide {
      * @return whether criteria LIC 12 is true or false
      */
     public boolean lic12() {
-        if (COORDINATES == null || COORDINATES.length < 3 ) {
-            return false;}
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
         if (LENGTH2 < 0) {
             throw new IllegalArgumentException("length2 must be bigger than 0");
-        } 
+        }
         boolean condLength1 = false;
         boolean condLength2 = false;
-        for (int i = 0; i < COORDINATES.length - (K_PTS + 1); i++){
+        for (int i = 0; i < COORDINATES.length - (K_PTS + 1); i++) {
             Point2D.Double p1 = COORDINATES[i];
-            Point2D.Double p2 = COORDINATES[i +K_PTS +1];
-            if(distSq(p1, p2) > LENGTH1 * LENGTH1){
+            Point2D.Double p2 = COORDINATES[i + K_PTS + 1];
+            if (distSq(p1, p2) > LENGTH1 * LENGTH1) {
                 condLength1 = true;
             }
-            if(distSq(p1, p2) < LENGTH2 * LENGTH2){
+            if (distSq(p1, p2) < LENGTH2 * LENGTH2) {
                 condLength2 = true;
             }
-            if (condLength1 && condLength2){
+            if (condLength1 && condLength2) {
                 return true;
-            }   
+            }
         }
         return false;
     }
