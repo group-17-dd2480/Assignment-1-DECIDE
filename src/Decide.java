@@ -382,18 +382,19 @@ public class Decide {
      * @return whether criteria LIC 10 is true or false
      */
     public boolean lic10() {
-        if (COORDINATES == null || COORDINATES.length < 5 ) {
-            return false;}
+        if (COORDINATES == null || COORDINATES.length < 5) {
+            return false;
+        }
         if (E_PTS < 1 || F_PTS < 1 || E_PTS + F_PTS > COORDINATES.length - 3) {
             throw new IllegalArgumentException("Invalid number of points, check e_pts and f_pts values");
-        } 
-        for (int i = 0; i < COORDINATES.length - (E_PTS + F_PTS + 2); i++){
+        }
+        for (int i = 0; i < COORDINATES.length - (E_PTS + F_PTS + 2); i++) {
             Point2D.Double p1 = COORDINATES[i];
             Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
             Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
-            if (triangleArea(p1, p2, p3) > AREA1){
+            if (triangleArea(p1, p2, p3) > AREA1) {
                 return true;
-            } 
+            }
         }
         return false;
     }
@@ -418,12 +419,32 @@ public class Decide {
     }
 
     /**
-     * LIC 12 checks if
+     * LIC 12 checks if there exists two points separated by K_PTS points such that the distance between them is greater than LENGTH1 and less than LENGTH2
      * 
      * @return whether criteria LIC 12 is true or false
      */
     public boolean lic12() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (LENGTH2 < 0) {
+            throw new IllegalArgumentException("length2 must be bigger than 0");
+        }
+        boolean condLength1 = false;
+        boolean condLength2 = false;
+        for (int i = 0; i < COORDINATES.length - (K_PTS + 1); i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + K_PTS + 1];
+            if (distSq(p1, p2) > LENGTH1 * LENGTH1) {
+                condLength1 = true;
+            }
+            if (distSq(p1, p2) < LENGTH2 * LENGTH2) {
+                condLength2 = true;
+            }
+            if (condLength1 && condLength2) {
+                return true;
+            }
+        }
         return false;
     }
 

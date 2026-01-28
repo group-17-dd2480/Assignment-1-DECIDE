@@ -310,68 +310,131 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 10 returns true when there exists at least one set of
-     * three points separated by E_PTS and F_PTS that form a triangle
-     * with area greater than AREA1.
+     * Contract: LIC 12 returns true when there exists at least one pair of points
+     * separated by K_PTS points with distance > LENGTH1 and at least one pair
+     * separated by K_PTS points with distance < LENGTH2.
      */
 
     @Test
-    void lic10_positiveTest_areaGreater() {
+    void lic12_positiveTest_bothDistancesMet() {
         Decide decide = new Decide();
-        decide.E_PTS = 1;
-        decide.F_PTS = 1;
-        decide.AREA1 = 1.0;
+        decide.K_PTS = 2;
+        decide.LENGTH1 = 5.0;
+        decide.LENGTH2 = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
                 new Point2D.Double(0, 0),
                 new Point2D.Double(0, 0),
-                new Point2D.Double(4, 0),
                 new Point2D.Double(0, 0),
-                new Point2D.Double(0, 4)
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(7, 0),
+                new Point2D.Double(0, 0)
         };
-        assertTrue(decide.lic10());
+        assertTrue(decide.lic12());
     }
 
     /**
-     * Contract: LIC 10 returns false when no valid triple of points
-     * forms a triangle with area greater than AREA1.
+     * Contract: LIC 12 returns false when there is no pair of points
+     * separated by K_PTS points with distance > LENGTH1
      */
-    @Test
-    void lic10_negativeTest_areaSmaller() {
-        Decide decide = new Decide();
-        decide.E_PTS = 1;
-        decide.F_PTS = 1;
-        decide.AREA1 = 10.0;
 
+    @Test
+    void lic12_negativeTest_distanceSmaller() {
+        Decide decide = new Decide();
+        decide.K_PTS = 2;
+        decide.LENGTH1 = 10.0;
+        decide.LENGTH2 = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(1, 1),
-                new Point2D.Double(1, 1),
-                new Point2D.Double(-1, 1),
-                new Point2D.Double(-1, 1),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0)
+        };
+        assertFalse(decide.lic12());
+    }
+
+    /**
+     * Contract: LIC 12 returns false when there are too few points
+     */
+
+    @Test
+    void lic12_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 1.0;
+        decide.LENGTH2 = 1.0;
+        decide.COORDINATES = new Point2D.Double[] {
                 new Point2D.Double(0, 0),
                 new Point2D.Double(0, 0)
         };
-
-        assertFalse(decide.lic10());
-    }
-
-    /**
-     * Contract: LIC 10 returns false when fewer than 5 points are provided.
-     */
-    @Test
-    void lic10_invalidTest_tooFewPoints() {
-        Decide decide = new Decide();
-        decide.E_PTS = 1;
-        decide.F_PTS = 1;
-        decide.AREA1 = 1.0;
-
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(1, 1)
-        };
-
-        assertFalse(decide.lic10());
+        assertFalse(decide.lic12());
     }
 
     static class setCMVTestDecideStub extends Decide {
+        /**
+         * Contract: LIC 10 returns true when there exists at least one set of
+         * three points separated by E_PTS and F_PTS that form a triangle
+         * with area greater than AREA1.
+         */
+
+        @Test
+        void lic10_positiveTest_areaGreater() {
+            Decide decide = new Decide();
+            decide.E_PTS = 1;
+            decide.F_PTS = 1;
+            decide.AREA1 = 1.0;
+            decide.COORDINATES = new Point2D.Double[] {
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(4, 0),
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(0, 4)
+            };
+            assertTrue(decide.lic10());
+        }
+
+        /**
+         * Contract: LIC 10 returns false when no valid triple of points
+         * forms a triangle with area greater than AREA1.
+         */
+        @Test
+        void lic10_negativeTest_areaSmaller() {
+            Decide decide = new Decide();
+            decide.E_PTS = 1;
+            decide.F_PTS = 1;
+            decide.AREA1 = 10.0;
+
+            decide.COORDINATES = new Point2D.Double[] {
+                    new Point2D.Double(1, 1),
+                    new Point2D.Double(1, 1),
+                    new Point2D.Double(-1, 1),
+                    new Point2D.Double(-1, 1),
+                    new Point2D.Double(0, 0),
+                    new Point2D.Double(0, 0)
+            };
+
+            assertFalse(decide.lic10());
+        }
+
+        /**
+         * Contract: LIC 10 returns false when fewer than 5 points are provided.
+         */
+        @Test
+        void lic10_invalidTest_tooFewPoints() {
+            Decide decide = new Decide();
+            decide.E_PTS = 1;
+            decide.F_PTS = 1;
+            decide.AREA1 = 1.0;
+
+            decide.COORDINATES = new Point2D.Double[] {
+                    new Point2D.Double(1, 1)
+            };
+
+            assertFalse(decide.lic10());
+        }
+
         boolean[] ret = new boolean[15];
 
         @Override
