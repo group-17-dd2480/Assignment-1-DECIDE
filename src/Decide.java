@@ -377,12 +377,24 @@ public class Decide {
     }
 
     /**
-     * LIC 10 checks if
+     * LIC 10 checks if there exists atleast one set of three data points separated by E_PTS and F_PTS points that form a triangle with area greater than AREA1
      * 
      * @return whether criteria LIC 10 is true or false
      */
     public boolean lic10() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 5 ) {
+            return false;}
+        if (E_PTS < 1 || F_PTS < 1 || E_PTS + F_PTS > COORDINATES.length - 3) {
+            throw new IllegalArgumentException("Invalid number of points, check e_pts and f_pts values");
+        } 
+        for (int i = 0; i < COORDINATES.length - (E_PTS + F_PTS + 2); i++){
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + E_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + E_PTS + F_PTS + 2];
+            if (triangleArea(p1, p2, p3) > AREA1){
+                return true;
+            } 
+        }
         return false;
     }
 

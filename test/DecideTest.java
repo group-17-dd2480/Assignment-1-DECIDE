@@ -310,35 +310,38 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 4 returns true when there exists at least one set of Q_PTS
-     * consecutive points that belong to more than QUADS quadrants.
+     * Contract: LIC 10 returns true when there exists at least one set of
+     * three points separated by E_PTS and F_PTS that form a triangle
+     * with area greater than AREA1.
      */
-    @Test
-    void lic4_positiveTest_moreThanQuadsQuadrants() {
-        Decide decide = new Decide();
-        decide.Q_PTS = 4;
-        decide.QUADS = 3;
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(1, 1),
-                new Point2D.Double(-1, 1),
-                new Point2D.Double(-1, -1),
-                new Point2D.Double(1, -1),
-                new Point2D.Double(0, -1),
-                new Point2D.Double(1, 0)
 
+    @Test
+    void lic10_positiveTest_areaGreater() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(4, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 4)
         };
-        assertTrue(decide.lic4());
+        assertTrue(decide.lic10());
     }
 
     /**
-     * Contract: LIC 4 returns false when no set of Q_PTS consecutive points
-     * lies belong to more than QUADS quadrants.
+     * Contract: LIC 10 returns false when no valid triple of points
+     * forms a triangle with area greater than AREA1.
      */
     @Test
-    void lic4_negativeTest_notEnoughQuadrants() {
+    void lic10_negativeTest_areaSmaller() {
         Decide decide = new Decide();
-        decide.Q_PTS = 4;
-        decide.QUADS = 3;
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 10.0;
+
         decide.COORDINATES = new Point2D.Double[] {
                 new Point2D.Double(1, 1),
                 new Point2D.Double(1, 1),
@@ -347,22 +350,25 @@ public class DecideTest {
                 new Point2D.Double(0, 0),
                 new Point2D.Double(0, 0)
         };
-        assertFalse(decide.lic4());
+
+        assertFalse(decide.lic10());
     }
 
     /**
-     * Contract: LIC 4 returns false when there are too few points
-     * to form a set of Q_PTS consecutive points.
+     * Contract: LIC 10 returns false when fewer than 5 points are provided.
      */
     @Test
-    void lic4_invalidTest_tooFewPoints() {
+    void lic10_invalidTest_tooFewPoints() {
         Decide decide = new Decide();
-        decide.Q_PTS = 3;
-        decide.QUADS = 3;
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(1, 1),
+                new Point2D.Double(1, 1)
         };
-        assertFalse(decide.lic4());
+
+        assertFalse(decide.lic10());
     }
 
     static class setCMVTestDecideStub extends Decide {
