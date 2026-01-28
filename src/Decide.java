@@ -207,7 +207,7 @@ public class Decide {
         // Checks if three points are given and epsilon is within range
         if (COORDINATES == null || COORDINATES.length < 3) {
             return false;}
-        if (EPSILON < 0 || EPSILON > Math.PI) {
+        if (EPSILON < 0 || EPSILON >= Math.PI) {
             throw new IllegalArgumentException("Epsilon must be between 0 and pi");
         } 
         // Check every triplet of consecutive points i, i+1 and i+2

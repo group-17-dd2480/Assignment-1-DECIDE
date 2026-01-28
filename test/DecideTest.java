@@ -1,5 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import java.awt.geom.Point2D;
+
 
 public class DecideTest {
 
@@ -10,6 +12,56 @@ public class DecideTest {
     void addWorks() {
         assertEquals(5, Decide.add(2, 3));
     }
+    /**
+     * Contract: LIC 2 returns true when there exists at least one set of three
+     * consecutive points forming an angle smaller than (PI - EPSILON).
+     */
+    @Test
+    void lic2_positiveTest_angleSmallerThan() {
+        Decide decide = new Decide();
+        decide.EPSILON = 0.1;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 0),   
+            new Point2D.Double(1, 1)
+        };
+        assertTrue(decide.lic2());
+    }
+
+    /**
+     * Contract: LIC 2 returns false when all the triples form angles that are
+     * within the range (PI - EPSILON, PI + EPSILON).
+     */
+    @Test
+    void lic2_negativeTest_angleLargerThan() {
+        Decide decide = new Decide();
+        decide.EPSILON = 0.1;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 0),  
+            new Point2D.Double(2, 0)
+        };
+        assertFalse(decide.lic2());
+    }
+
+    /**
+     * Contract: LIC 2 returns false when fewer than three points are provided.
+     */
+    @Test
+    void lic2_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.EPSILON = 0.1;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0),
+            new Point2D.Double(1, 1)
+        };
+        assertFalse(decide.lic2());
+    }
+
+
+
+
+
 
     static class setCMVTestDecideStub extends Decide {
         boolean[] ret = new boolean[15];
