@@ -4,6 +4,55 @@ import java.awt.geom.Point2D;
 
 public class DecideTest {
 
+    @Test
+    void lic0_positiveTest_distanceIsGreater() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(10, 0)
+        };
+        decide.LENGTH1 = 5.0; 
+        assertTrue(decide.lic0());
+    }
+
+    /* LIC 0 returns false when no two consecutive data points are a distance greater than LENGTH1 apart.*/
+    @Test
+    void lic0_negativeTest_distanceIsEqual() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(5, 0) // Distance is exactly 5
+        };
+        decide.LENGTH1 = 5.0;
+        assertFalse(decide.lic0());
+    }
+
+    /*LIC 1 returns true when there exists at least one set of three consecutive data points that cannot all be contained within or on a circle of radius RADIUS1 */
+    @Test
+    void lic1_positiveTest_cannotFitInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(10, 0), 
+            new Point2D.Double(0, 10)
+        };
+        decide.RADIUS1 = 1.0;
+        assertTrue(decide.lic1());
+    }
+
+    /*LIC 1 returns false when all sets of three data points can be contained within or on a circle of RADIUS1.*/
+    @Test
+    void lic1_negativeTest_fitsInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(0, 0), 
+            new Point2D.Double(1, 0), 
+            new Point2D.Double(0, 1)
+        };
+        decide.RADIUS1 = 10.0;
+        assertFalse(decide.lic1());
+    }
+
     /**
      * LIC 3 returns true when any three points
      * form a triangle with an area greater than AREA1.
