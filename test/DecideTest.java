@@ -21,6 +21,52 @@ public class DecideTest {
     }
 
     /**
+     * Contract: LIC 2 returns true when there exists at least one set of three
+     * consecutive points forming an angle smaller than (PI - EPSILON).
+     */
+    @Test
+    void lic2_positiveTest_angleSmallerThan() {
+        Decide decide = new Decide();
+        decide.EPSILON = 0.1;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(1, 1)
+        };
+        assertTrue(decide.lic2());
+    }
+
+    /**
+     * Contract: LIC 2 returns false when all the triples form angles that are
+     * within the range (PI - EPSILON, PI + EPSILON).
+     */
+    @Test
+    void lic2_negativeTest_angleLargerThan() {
+        Decide decide = new Decide();
+        decide.EPSILON = 0.1;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(2, 0)
+        };
+        assertFalse(decide.lic2());
+    }
+
+    /**
+     * Contract: LIC 2 returns false when fewer than three points are provided.
+     */
+    @Test
+    void lic2_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.EPSILON = 0.1;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 1)
+        };
+        assertFalse(decide.lic2());
+    }
+
+    /**
      * LIC 3 returns false when the triangle area
      * is exactly equal to or less than AREA1.
      */
@@ -382,11 +428,11 @@ public class DecideTest {
         decide.N_PTS = 3;
         decide.DIST = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(1, 3),   
-            new Point2D.Double(2, 0),
-            new Point2D.Double(3, 0),
-            new Point2D.Double(4, 0)
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 3),
+                new Point2D.Double(2, 0),
+                new Point2D.Double(3, 0),
+                new Point2D.Double(4, 0)
         };
         assertTrue(decide.lic6());
     }
@@ -401,31 +447,30 @@ public class DecideTest {
         decide.N_PTS = 3;
         decide.DIST = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(1, 1),  
-            new Point2D.Double(2, 0),  
-            new Point2D.Double(3, 0),
-            new Point2D.Double(4, 0)
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 1),
+                new Point2D.Double(2, 0),
+                new Point2D.Double(3, 0),
+                new Point2D.Double(4, 0)
         };
         assertFalse(decide.lic6());
     }
-    
+
     /**
      * Contract: LIC 6 returns false when there are too few points
      */
     @Test
     void lic6_invalidTest_tooFewPoints() {
         Decide decide = new Decide();
-        decide.N_PTS = 3;   
+        decide.N_PTS = 3;
         decide.DIST = 1.0;
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(1, 1)   
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 1)
         };
         decide.NUMPOINTS = decide.COORDINATES.length;
         assertFalse(decide.lic6());
     }
-
 
     static class setCMVTestDecideStub extends Decide {
         /**

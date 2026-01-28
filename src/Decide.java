@@ -57,7 +57,7 @@ public class Decide {
      *            Point 1
      * @param p2
      *            Point 2
-     * @return Euclidian distance between points 1 and 2
+     * @return Squared Euclidian distance between points 1 and 2
      */
     public static double distSq(Point2D.Double p1, Point2D.Double p2) {
         double dx = p1.x - p2.x;
@@ -184,18 +184,40 @@ public class Decide {
      *            Point 2
      * @param p3
      *            Point 3
+     *
      * @return the squared distance from point p3 to the line formed by points p1 and p2
      */
     private static double distPointToLine(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
         double dx = p1.x - p2.x;
         double dy = p1.y - p2.y;
-        double den = Math.sqrt(dx * dx + dy * dy);  
+        double den = Math.sqrt(dx * dx + dy * dy);
         if (den == 0) {
             return distSq(p1, p3);
         }
         double num = Math.abs(dx * (p1.y - p3.y) - dy * (p1.x - p3.x));
         double distance = num / den;
-        return distance*distance;
+        return distance * distance;
+    }
+
+    /**
+     * @param p1
+     *            Point 1
+     * @param p2
+     *            Point 2
+     * @param p3
+     *            Point 3
+     * @return the angle at vertex p2 formed by points p1 and p3
+     *
+     */
+    private static double angleVertex(Point2D.Double p1, Point2D.Double p2, Point2D.Double p3) {
+        double mag1 = distSq(p1, p2);
+        double mag2 = distSq(p3, p2);
+        if (mag1 == 0 || mag2 == 0)
+            return Double.NaN;
+        double dot = (p1.x - p2.x) * (p3.x - p2.x) + (p1.y - p2.y) * (p3.y - p2.y);
+        double cosineTheta = dot / (Math.sqrt(mag1) * Math.sqrt(mag2));
+        cosineTheta = Math.max(-1.0, Math.min(1.0, cosineTheta));
+        return Math.acos(cosineTheta);
     }
 
     /**
@@ -205,6 +227,7 @@ public class Decide {
      */
 
     public boolean lic0() {
+
         // Conditions to check for at least two points, and non-negative
         if (COORDINATES == null || COORDINATES.length < 2)
             return false;
@@ -245,12 +268,29 @@ public class Decide {
     }
 
     /**
-     * LIC 2 checks if
+     * LIC 2 checks if there exist one set of three consecutive data points that form an angle smaller than (PI - EPSILON) or larger than (PI + EPSILON)
      * 
      * @return whether criteria LIC 2 is true or false
      */
     public boolean lic2() {
-        // todo
+        // Checks if three points are given and epsilon is within range
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (EPSILON < 0 || EPSILON >= Math.PI) {
+            throw new IllegalArgumentException("Epsilon must be between 0 and pi");
+        }
+        // Check every triplet of consecutive points i, i+1 and i+2
+        for (int i = 0; i < COORDINATES.length - 2; i++) {
+            double angle = angleVertex(COORDINATES[i], COORDINATES[i + 1], COORDINATES[i + 2]);
+            // Skip if angle undefined
+            if (Double.isNaN(angle)) {
+                continue;
+            }
+            if ((angle < (Math.PI - EPSILON)) || angle > (Math.PI + EPSILON)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -330,19 +370,20 @@ public class Decide {
      */
     public boolean lic6() {
         if (COORDINATES == null || COORDINATES.length < 3) {
-            return false;}
+            return false;
+        }
         if (N_PTS < 3 || N_PTS > COORDINATES.length) {
             throw new IllegalArgumentException("N_PTS is out of range");
-        } 
+        }
         if (DIST < 0) {
             throw new IllegalArgumentException("Distance must be non-negative");
-        } 
-        for (int i = 0; i < COORDINATES.length - (N_PTS-1); i++){
-            for(int j =1; j<N_PTS-1; j++){
-                if(distPointToLine(COORDINATES[i], COORDINATES[i+N_PTS-1], COORDINATES[i+j]) > DIST*DIST){
-                    return true;                  
+        }
+        for (int i = 0; i < COORDINATES.length - (N_PTS - 1); i++) {
+            for (int j = 1; j < N_PTS - 1; j++) {
+                if (distPointToLine(COORDINATES[i], COORDINATES[i + N_PTS - 1], COORDINATES[i + j]) > DIST * DIST) {
+                    return true;
                 }
-            }     
+            }
         }
         return false;
     }
@@ -630,7 +671,6 @@ public class Decide {
         }
         LAUNCH = true;
     }
-
 
     public static void main(String[] args) {
         System.out.println(add(2, 3));
