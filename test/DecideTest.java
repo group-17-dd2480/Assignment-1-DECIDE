@@ -12,6 +12,69 @@ public class DecideTest {
     void addWorks() {
         assertEquals(5, Decide.add(2, 3));
     }
+    /**
+     * Contract: LIC 14 returns true when there exist three data points separated by
+     * E_PTS and F_PTS consecutive points that form a triangle with area greater
+     * than AREA1 AND less than AREA2.
+     */
+    @Test
+    void lic14_positiveTest_bothConditionsMet() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(10.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(0.0, 1.0)
+        };
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+        decide.AREA2 = 100.0;
+        assertTrue(decide.lic14());
+    }
+
+    /**
+     * Contract: LIC 14 returns false when no valid three-point combination forms
+     * a triangle with area greater than AREA1.
+     */
+    @Test
+    void lic14_negativeTest_areaTooSmall() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(1.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(0.0, 1.0)
+        };
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 100.0;
+        decide.AREA2 = 100.0;
+        assertFalse(decide.lic14());
+    }
+
+    /**
+     * Contract: LIC 14 returns false when there are insufficient data points
+     * to form a valid three-point set with the required separations.
+     */
+    @Test
+    void lic14_negativeTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(1.0, 0.0),
+                new Point2D.Double(2.0, 0.0),
+                new Point2D.Double(3.0, 0.0)
+        };
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 100.0;
+        decide.AREA2 = 100.0;
+        assertFalse(decide.lic14());
+    }
+
 
     /**
      * Contract: LIC 13 returns true when there exist three data points separated by
