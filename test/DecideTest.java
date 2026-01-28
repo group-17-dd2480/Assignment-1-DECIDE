@@ -13,6 +13,69 @@ public class DecideTest {
         assertEquals(5, Decide.add(2, 3));
     }
 
+    /**
+     * Contract: LIC 13 returns true when there exist three data points separated by
+     * A_PTS and B_PTS consecutive points that cannot be contained in a circle of
+     * radius RADIUS1 AND can be contained in a circle of radius RADIUS2.
+     */
+    @Test
+    void lic13_positiveTest_bothConditionsMet() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(5.0, 5.0)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 1.0;
+        decide.RADIUS2 = 100.0;
+        assertTrue(decide.lic13());
+    }
+
+    /**
+     * Contract: LIC 13 returns false when all valid three-point combinations
+     * can be contained in a circle of radius RADIUS1.
+     */
+    @Test
+    void lic13_negativeTest_fitsInBothRadii() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(5.0, 5.0)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 100.0;
+        decide.RADIUS2 = 100.0;
+        assertFalse(decide.lic13());
+    }
+
+    /**
+     * Contract: LIC 13 returns false when there are not enough data points
+     * to form a valid three-point set with the required separations.
+     */
+    @Test
+    void lic13_negativeTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(2.0, 2.0),
+                new Point2D.Double(3.0, 3.0)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 100.0;
+        decide.RADIUS2 = 100.0;
+        assertFalse(decide.lic13());
+    }
+
     static class setCMVTestDecideStub extends Decide {
         boolean[] ret = new boolean[15];
 

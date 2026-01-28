@@ -335,13 +335,37 @@ public class Decide {
     }
 
     /**
-     * LIC 13 checks if
-     * 
+     * LIC 13 checks if three points separated by A_PTS and B_PTS cannot fit in RADIUS1 AND can fit in RADIUS2
+     *
      * @return whether criteria LIC 13 is true or false
      */
     public boolean lic13() {
-        // todo
-        return false;
+        if (COORDINATES == null || COORDINATES.length < 5)
+            return false;
+        if (RADIUS1 < 0 || RADIUS2 < 0)
+            throw new IllegalArgumentException("radius values must be >= 0");
+        if (A_PTS < 1 || B_PTS < 1)
+            throw new IllegalArgumentException("A_PTS and B_PTS must be >= 1");
+        if (A_PTS + B_PTS > COORDINATES.length - 3)
+            return false;
+
+        boolean fitInR1 = false;
+        boolean fitInR2 = false;
+
+        for (int i = 0; i < COORDINATES.length - A_PTS - B_PTS - 2; i++) {
+            Point2D.Double p1 = COORDINATES[i];
+            Point2D.Double p2 = COORDINATES[i + A_PTS + 1];
+            Point2D.Double p3 = COORDINATES[i + A_PTS + B_PTS + 2];
+
+            if (!fitInR1 && !fitInCircle(p1, p2, p3, RADIUS1))
+                fitInR1 = true;
+            if (!fitInR2 && fitInCircle(p1, p2, p3, RADIUS2))
+                fitInR2 = true;
+
+            if (fitInR1 && fitInR2)
+                return true;
+        }
+        return fitInR1 && fitInR2;
     }
 
     /**
