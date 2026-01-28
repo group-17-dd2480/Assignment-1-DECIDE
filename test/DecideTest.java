@@ -2,7 +2,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import java.awt.geom.Point2D;
 
-import java.awt.geom.Point2D;
 
 public class DecideTest {
 
@@ -310,6 +309,64 @@ public class DecideTest {
         decide.G_PTS = 1;
         assertFalse(decide.lic11());
     }
+
+
+    /**
+     * Contract: LIC 4 returns true when there exists at least one set of Q_PTS
+     * consecutive points that belong to more than QUADS quadrants.
+     */
+    @Test
+    void lic4_positiveTest_moreThanQuadsQuadrants() {
+        Decide decide = new Decide();
+        decide.Q_PTS = 4;
+        decide.QUADS = 3; 
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(1, 1),   
+            new Point2D.Double(-1, 1),  
+            new Point2D.Double(-1, -1), 
+            new Point2D.Double(1, -1),
+            new Point2D.Double(0, -1),
+            new Point2D.Double(1, 0)  
+
+        };
+        assertTrue(decide.lic4());
+    }
+    /**
+     * Contract: LIC 4 returns false when no set of Q_PTS consecutive points
+     * lies belong to more than QUADS quadrants.
+     */
+    @Test
+    void lic4_negativeTest_notEnoughQuadrants() {
+        Decide decide = new Decide();
+        decide.Q_PTS = 4;
+        decide.QUADS = 3;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(1, 1),   
+            new Point2D.Double(1, 1),  
+            new Point2D.Double(-1, 1),  
+            new Point2D.Double(-1, 1),
+            new Point2D.Double(0, 0),
+            new Point2D.Double(0, 0)   
+        };
+        assertFalse(decide.lic4());
+    }
+    /**
+     * Contract: LIC 4 returns false when there are too few points
+     * to form a set of Q_PTS consecutive points.
+     */
+    @Test
+    void lic4_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.Q_PTS = 3;
+        decide.QUADS = 3;
+        decide.COORDINATES = new Point2D.Double[] {
+            new Point2D.Double(1, 1),
+        };
+        assertFalse(decide.lic4());
+    }
+
+
+
 
     static class setCMVTestDecideStub extends Decide {
         boolean[] ret = new boolean[15];
