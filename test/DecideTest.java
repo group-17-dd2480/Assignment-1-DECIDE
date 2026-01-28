@@ -1,17 +1,43 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+import java.awt.geom.Point2D;
 
 import java.awt.geom.Point2D;
 
 public class DecideTest {
 
     /**
-     * Test for the add method in Decide class.
+     * LIC 3 returns true when any three points
+     * form a triangle with an area greater than AREA1.
      */
     @Test
-    void addWorks() {
-        assertEquals(5, Decide.add(2, 3));
+    void lic3_positiveTest_areaIsGreater() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0),
+                new Point2D.Double(0, 10)
+        };
+        decide.AREA1 = 40.0;
+        assertTrue(decide.lic3());
     }
+
+    /**
+     * LIC 3 returns false when the triangle area
+     * is exactly equal to or less than AREA1.
+     */
+    @Test
+    void lic3_negativeTest_areaIsEqual() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0),
+                new Point2D.Double(0, 10)
+        };
+        decide.AREA1 = 50.0;
+        assertFalse(decide.lic3());
+    }
+
     /**
      * Contract: LIC 14 returns true when there exist three data points separated by
      * E_PTS and F_PTS consecutive points that form a triangle with area greater
@@ -74,7 +100,6 @@ public class DecideTest {
         decide.AREA2 = 100.0;
         assertFalse(decide.lic14());
     }
-
 
     /**
      * Contract: LIC 13 returns true when there exist three data points separated by
@@ -139,7 +164,6 @@ public class DecideTest {
         assertFalse(decide.lic13());
     }
 
-
     /**
      * Contract: LIC 5 returns true when there exist two consecutive data points
      * where the second point has a smaller x-coordinate than the first.
@@ -175,7 +199,7 @@ public class DecideTest {
     @Test
     void lic5_negativeTest_onePoint() {
         Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {new Point2D.Double(1.0, 1.0)};
+        decide.COORDINATES = new Point2D.Double[] { new Point2D.Double(1.0, 1.0) };
         assertFalse(decide.lic5());
     }
 

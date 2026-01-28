@@ -147,7 +147,7 @@ public class Decide {
         double b = Math.sqrt(b2);
 
         double cosAngle = (a2 + b2 - c2) / (2.0 * a * b);
-        cosAngle = Math.max(-1.0, Math.min(1.0, cosAngle));  // Clamp to [-1, 1]
+        cosAngle = Math.max(-1.0, Math.min(1.0, cosAngle)); // Clamp to [-1, 1]
         return Math.acos(cosAngle);
     }
 
@@ -208,12 +208,22 @@ public class Decide {
     }
 
     /**
-     * LIC 3 checks if
+     * LIC 3 checks if any three points form a triangle with an area greater than area 1
      * 
      * @return whether criteria LIC 3 is true or false
      */
     public boolean lic3() {
-        // todo
+        if (COORDINATES == null || COORDINATES.length < 3) {
+            return false;
+        }
+        if (AREA1 < 0) {
+            throw new IllegalArgumentException("Radius must be bigger than 0");
+        }
+        for (int i = 0; i < COORDINATES.length - 2; i++) {
+            double area = triangleArea(COORDINATES[i], COORDINATES[i + 1], COORDINATES[i + 2]);
+            if (area > AREA1)
+                return true;
+        }
         return false;
     }
 
@@ -438,9 +448,9 @@ public class Decide {
      * Issue #21: Create the Preliminary Unlocking Matrix (PUM) from CMV and LCM.
      *
      * Rules:
-     *  - NOTUSED => true
-     *  - ANDD    => CMV[i] && CMV[j]
-     *  - ORR     => CMV[i] || CMV[j]
+     * - NOTUSED => true
+     * - ANDD => CMV[i] && CMV[j]
+     * - ORR => CMV[i] || CMV[j]
      */
     public void setPUM() {
         for (int i = 0; i < 15; i++) {
