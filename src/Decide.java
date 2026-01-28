@@ -37,19 +37,7 @@ public class Decide {
     boolean[][] PUM;
     boolean[] CMV, FUV;
     boolean LAUNCH;
-
-    /**
-     * @param a
-     *            first integer
-     * @param b
-     *            second integer
-     * @return the sum of a and b
-     */
-
-    public static int add(int a, int b) {
-        return a + b;
-    }
-
+    
     /**
      * Helper function to calculate Euclidian distance between two points
      * 
@@ -672,16 +660,31 @@ public class Decide {
         LAUNCH = true;
     }
 
-    public static void main(String[] args) {
-        System.out.println(add(2, 3));
-        Decide decideProblem = new Decide();
+    /**
+     * Main decide function that returns the final launch decision
+     * 
+     * @return whether to launch or not
+     */
+    public void decide() {
+        setCMV();
+        setPUM();
+        setFUV();
+        setLAUNCH();
     }
 
-    public void Decide() {
+    /**
+     * Constructor for the decide class
+     */
+    public Decide() {
         LCM2 = new CONNECTORS[15][15];
         COORDINATES = new Point2D.Double[100];
         PUM = new boolean[15][15];
         CMV = new boolean[15];
         FUV = new boolean[15];
+        for (int i = 0; i < 15; i++) {
+            for (int j = 0; j < 15; j++) {
+                LCM2[i][j] = CONNECTORS.NOTUSED;
+            }
+        }
     }
 }
