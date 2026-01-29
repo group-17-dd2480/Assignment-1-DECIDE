@@ -41,28 +41,28 @@ The main goal with the assignment is to learn of to apply software techniques, a
 
 ## Roles
 **Gabriel:** 
-*Initiated code structure, and git
-*Implimented PUM FUV 
-*CUV structure.
+-Initiated code structure, and git
+-Implimented PUM FUV 
+-CUV structure
 
 **Lassya:** 
-*Implemented LICs 2,4,6,10,12 
-*Developed helper gunction for geomertric calculation.
+-Implemented LICs 2,4,6,10,12 
+-Developed helper gunction for geomertric calculation.
 
 **Olivia:** 
-*Implimeted LICs 0,1,3,7,8
-*Developed helper functions for geometric calculations
-*Uppdated final README.
+-Implimeted LICs 0,1,3,7,8
+-Developed helper functions for geometric calculations
+-Uppdated final README.
 
 **David:** 
-*Implemeted LICs 5,9,11,12
-*Created contributing.md documentation
-*Assisted in README
+-Implemeted LICs 5,9,11,12
+-Created contributing.md documentation
+-Assisted in README
 
 **Sophia:** 
-*Created and managed GitHub issues
-*Declared global varibles
-*Contributed to inital README documation.
+-Created and managed GitHub issues
+-Declared global varibles
+-Contributed to inital README documation.
 
 
 ### Way of working (Remarkable aspect)
