@@ -45,7 +45,7 @@ The main goal with the assignment is to learn of to apply software techniques, a
 -Implimented PUM FUV 
 -CUV structure
 
-**Lassya:** 
+**Laasya:** 
 -Implemented LICs 2,4,6,10,12 
 -Developed helper gunction for geomertric calculation.
 
