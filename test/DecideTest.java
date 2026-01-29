@@ -4,74 +4,74 @@ import java.awt.geom.Point2D;
 
 public class DecideTest {
 
+    /**
+     * Contract: LIC 0 returns true when there exists at least one pair of consecutive data
+     * points that are a distance greater than LENGTH1 apart.
+     */
     @Test
     void lic0_positiveTest_distanceIsGreater() {
         Decide decide = new Decide();
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0), 
-            new Point2D.Double(10, 0)
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0)
         };
-        decide.LENGTH1 = 5.0; 
+        decide.LENGTH1 = 5.0;
         assertTrue(decide.lic0());
     }
 
-    /* LIC 0 returns false when no two consecutive data points are a distance greater than LENGTH1 apart.*/
+    /**
+     * Contract: LIC 0 returns false when no two consecutive
+     * data points are at a distance greater than LENGTH1 apart.
+     */
+
     @Test
     void lic0_negativeTest_distanceIsEqual() {
         Decide decide = new Decide();
         decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0), 
-            new Point2D.Double(5, 0) // Distance is exactly 5
+                new Point2D.Double(0, 0),
+                new Point2D.Double(5, 0) // Distance is exactly 5
         };
         decide.LENGTH1 = 5.0;
         assertFalse(decide.lic0());
     }
 
-    /*LIC 1 returns true when there exists at least one set of three consecutive data points that cannot all be contained within or on a circle of radius RADIUS1 */
+    /**
+     * LIC 1 returns true when there exists at least one set of three consecutive data
+     * points that cannot all be contained within or on a circle of radius RADIUS1
+     */
+
     @Test
     void lic1_positiveTest_cannotFitInCircle() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0), 
-            new Point2D.Double(10, 0), 
-            new Point2D.Double(0, 10)
-        };
-        decide.RADIUS1 = 1.0;
-        assertTrue(decide.lic1());
-    }
-
-    /*LIC 1 returns false when all sets of three data points can be contained within or on a circle of RADIUS1.*/
-    @Test
-    void lic1_negativeTest_fitsInCircle() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0), 
-            new Point2D.Double(1, 0), 
-            new Point2D.Double(0, 1)
-        };
-        decide.RADIUS1 = 10.0;
-        assertFalse(decide.lic1());
-    }
-
-    /**
-     * LIC 3 returns true when any three points
-     * form a triangle with an area greater than AREA1.
-     */
-    @Test
-    void lic3_positiveTest_areaIsGreater() {
         Decide decide = new Decide();
         decide.COORDINATES = new Point2D.Double[] {
                 new Point2D.Double(0, 0),
                 new Point2D.Double(10, 0),
                 new Point2D.Double(0, 10)
         };
-        decide.AREA1 = 40.0;
-        assertTrue(decide.lic3());
+        decide.RADIUS1 = 1.0;
+        assertTrue(decide.lic1());
+    }
+
+    /**
+     * LIC 1 returns false when all sets of three data points can be
+     * contained within or on a circle of RADIUS1.
+     */
+
+    @Test
+    void lic1_negativeTest_fitsInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 1)
+        };
+        decide.RADIUS1 = 10.0;
+        assertFalse(decide.lic1());
     }
 
     /**
      * Contract: LIC 2 returns true when there exists at least one set of three
-     * consecutive points forming an angle smaller than (PI - EPSILON).
+     * consecutive points forming an angle smaller than (PI - EPSILON) or greater than (PI + EPSILON).
      */
     @Test
     void lic2_positiveTest_angleSmallerThan() {
@@ -86,7 +86,7 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 2 returns false when all the triples form angles that are
+     * Contract: LIC 2 returns false when all the triplets form angles that are
      * within the range (PI - EPSILON, PI + EPSILON).
      */
     @Test
@@ -116,6 +116,22 @@ public class DecideTest {
     }
 
     /**
+     * LIC 3 returns true when any three points
+     * form a triangle with an area greater than AREA1.
+     */
+    @Test
+    void lic3_positiveTest_areaIsGreater() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0),
+                new Point2D.Double(0, 10)
+        };
+        decide.AREA1 = 40.0;
+        assertTrue(decide.lic3());
+    }
+
+    /**
      * LIC 3 returns false when the triangle area
      * is exactly equal to or less than AREA1.
      */
@@ -132,133 +148,62 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 14 returns true when there exist three data points separated by
-     * E_PTS and F_PTS consecutive points that form a triangle with area greater
-     * than AREA1 AND less than AREA2.
+     * Contract: LIC 4 returns true when there exists at least one set of Q_PTS
+     * consecutive points that belong to more than QUADS quadrants.
      */
     @Test
-    void lic14_positiveTest_bothConditionsMet() {
+    void lic4_positiveTest_moreThanQuadsQuadrants() {
         Decide decide = new Decide();
+        decide.Q_PTS = 4;
+        decide.QUADS = 3;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0.0, 0.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(10.0, 0.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(0.0, 1.0)
+                new Point2D.Double(1, 1),
+                new Point2D.Double(-1, 1),
+                new Point2D.Double(-1, -1),
+                new Point2D.Double(1, -1),
+                new Point2D.Double(0, -1),
+                new Point2D.Double(1, 0)
+
         };
-        decide.E_PTS = 1;
-        decide.F_PTS = 1;
-        decide.AREA1 = 1.0;
-        decide.AREA2 = 100.0;
-        assertTrue(decide.lic14());
+        assertTrue(decide.lic4());
     }
 
     /**
-     * Contract: LIC 14 returns false when no valid three-point combination forms
-     * a triangle with area greater than AREA1.
+     * Contract: LIC 4 returns false when no set of Q_PTS consecutive points
+     * lies belong to more than QUADS quadrants.
      */
     @Test
-    void lic14_negativeTest_areaTooSmall() {
+    void lic4_negativeTest_notEnoughQuadrants() {
         Decide decide = new Decide();
+        decide.Q_PTS = 4;
+        decide.QUADS = 3;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0.0, 0.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(1.0, 0.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(0.0, 1.0)
+                new Point2D.Double(1, 1),
+                new Point2D.Double(1, 1),
+                new Point2D.Double(-1, 1),
+                new Point2D.Double(-1, 1),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0)
         };
-        decide.E_PTS = 1;
-        decide.F_PTS = 1;
-        decide.AREA1 = 100.0;
-        decide.AREA2 = 100.0;
-        assertFalse(decide.lic14());
+        assertFalse(decide.lic4());
     }
 
     /**
-     * Contract: LIC 14 returns false when there are insufficient data points
-     * to form a valid three-point set with the required separations.
+     * Contract: LIC 4 returns false when there are fewer than 2 data points
      */
     @Test
-    void lic14_negativeTest_tooFewPoints() {
+    void lic4_invalidTest_tooFewPoints() {
         Decide decide = new Decide();
+        decide.Q_PTS = 3;
+        decide.QUADS = 3;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0.0, 0.0),
-                new Point2D.Double(1.0, 0.0),
-                new Point2D.Double(2.0, 0.0),
-                new Point2D.Double(3.0, 0.0)
+                new Point2D.Double(1, 1),
         };
-        decide.E_PTS = 1;
-        decide.F_PTS = 1;
-        decide.AREA1 = 100.0;
-        decide.AREA2 = 100.0;
-        assertFalse(decide.lic14());
+        assertFalse(decide.lic4());
     }
 
     /**
-     * Contract: LIC 13 returns true when there exist three data points separated by
-     * A_PTS and B_PTS consecutive points that cannot be contained in a circle of
-     * radius RADIUS1 AND can be contained in a circle of radius RADIUS2.
-     */
-    @Test
-    void lic13_positiveTest_bothConditionsMet() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0.0, 0.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(1.0, 1.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(5.0, 5.0)
-        };
-        decide.A_PTS = 1;
-        decide.B_PTS = 1;
-        decide.RADIUS1 = 1.0;
-        decide.RADIUS2 = 100.0;
-        assertTrue(decide.lic13());
-    }
-
-    /**
-     * Contract: LIC 13 returns false when all valid three-point combinations
-     * can be contained in a circle of radius RADIUS1.
-     */
-    @Test
-    void lic13_negativeTest_fitsInBothRadii() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0.0, 0.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(1.0, 1.0),
-                new Point2D.Double(10000.0, 10000.0),
-                new Point2D.Double(5.0, 5.0)
-        };
-        decide.A_PTS = 1;
-        decide.B_PTS = 1;
-        decide.RADIUS1 = 100.0;
-        decide.RADIUS2 = 100.0;
-        assertFalse(decide.lic13());
-    }
-
-    /**
-     * Contract: LIC 13 returns false when there are not enough data points
-     * to form a valid three-point set with the required separations.
-     */
-    @Test
-    void lic13_negativeTest_tooFewPoints() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0.0, 0.0),
-                new Point2D.Double(1.0, 1.0),
-                new Point2D.Double(2.0, 2.0),
-                new Point2D.Double(3.0, 3.0)
-        };
-        decide.A_PTS = 1;
-        decide.B_PTS = 1;
-        decide.RADIUS1 = 100.0;
-        decide.RADIUS2 = 100.0;
-        assertFalse(decide.lic13());
-    }
-
-    /**
-     * Contract: LIC 5 returns true when there exist two consecutive data points
+     * Contract: LIC 5 returns true when there exists two consecutive data points
      * where the second point has a smaller x-coordinate than the first.
      */
     @Test
@@ -290,10 +235,131 @@ public class DecideTest {
      * Contract: LIC 5 returns false when fewer than two data points are provided.
      */
     @Test
-    void lic5_negativeTest_onePoint() {
+    void lic5_invalidTest_onePoint() {
         Decide decide = new Decide();
         decide.COORDINATES = new Point2D.Double[] { new Point2D.Double(1.0, 1.0) };
         assertFalse(decide.lic5());
+    }
+
+    /**
+     * Contract: LIC 6 returns true when at least one point in a set of N_PTS
+     * consecutive points lies further than DIST from the line joining first and last points.
+     */
+    @Test
+    void lic6_positiveTest_distanceLarger() {
+        Decide decide = new Decide();
+        decide.N_PTS = 3;
+        decide.DIST = 2.0;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 3),
+                new Point2D.Double(2, 0),
+                new Point2D.Double(3, 0),
+                new Point2D.Double(4, 0)
+        };
+        assertTrue(decide.lic6());
+    }
+
+    /**
+     * Contract: LIC 6 returns false when all points are within DIST from their lines.
+     */
+
+    @Test
+    void lic6_negativeTest_distanceSmaller() {
+        Decide decide = new Decide();
+        decide.N_PTS = 3;
+        decide.DIST = 2.0;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 1),
+                new Point2D.Double(2, 0),
+                new Point2D.Double(3, 0),
+                new Point2D.Double(4, 0)
+        };
+        assertFalse(decide.lic6());
+    }
+
+    /**
+     * Contract: LIC 6 returns false when there are fewer than 3 points provided
+     */
+    @Test
+    void lic6_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.N_PTS = 3;
+        decide.DIST = 1.0;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 1)
+        };
+        assertFalse(decide.lic6());
+    }
+
+    /**
+     * Contract: LIC 7 returns true when there exist two points separated by exactly K_PTS
+     * intervening points that are at a distance greater than LENGTH1.
+     */
+    @Test
+    void lic7_positiveTest_distanceIsGreater() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // Gap point 1
+                new Point2D.Double(10, 10)
+        };
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 5.0;
+        assertTrue(decide.lic7());
+    }
+
+    /* Contract: LIC 7 returns false when all points separated by K_PTS are at a distance less than or equal to LENGTH1. */
+    @Test
+    void lic7_negativeTest_distanceIsEqual() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // First gap
+                new Point2D.Double(5, 0)
+        };
+        decide.K_PTS = 1;
+        decide.LENGTH1 = 5.0;
+        assertFalse(decide.lic7());
+    }
+
+    /* Contract: LIC 8 returns true when three points separated by A_PTS and B_PTS cannot be contained within a circle of RADIUS1. */
+    @Test
+    void lic8_positiveTest_cannotFitInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // First gap
+                new Point2D.Double(10, 0),
+                new Point2D.Double(0, 0), // Second gap
+                new Point2D.Double(0, 10)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 1.0;
+        assertTrue(decide.lic8());
+    }
+
+    /**
+     * Contract: LIC 8 returns false when all sets of points separated by
+     * A_PTS and B_PTS can be contained within a circle of RADIUS1.
+     */
+    @Test
+    void lic8_negativeTest_fitsInCircle() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0), // First gap
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 0), // Second gap
+                new Point2D.Double(0, 1)
+        };
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 10.0;
+        assertFalse(decide.lic8());
     }
 
     /**
@@ -340,10 +406,10 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 9 returns false when there are not enough data points.
+     * Contract: LIC 9 returns false when there are fewer than 5 data points provided.
      */
     @Test
-    void lic9_negativeTest_tooFewPoints() {
+    void lic9_invalidTest_tooFewPoints() {
         Decide decide = new Decide();
         decide.COORDINATES = new Point2D.Double[] {
                 new Point2D.Double(0.0, 0.0),
@@ -355,6 +421,68 @@ public class DecideTest {
         decide.D_PTS = 1;
         decide.EPSILON = 0.1;
         assertFalse(decide.lic9());
+    }
+
+    /**
+     * Contract: LIC 10 returns true when there exists at least one set of
+     * three points separated by E_PTS and F_PTS that form a triangle
+     * with area greater than AREA1.
+     */
+
+    @Test
+    void lic10_positiveTest_areaGreater() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(4, 0),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 4)
+        };
+        assertTrue(decide.lic10());
+    }
+
+    /**
+     * Contract: LIC 10 returns false when no valid triplet of points
+     * forms a triangle with area greater than AREA1.
+     */
+    @Test
+    void lic10_negativeTest_areaSmaller() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 10.0;
+
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(1, 1),
+                new Point2D.Double(1, 1),
+                new Point2D.Double(-1, 1),
+                new Point2D.Double(-1, 1),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(0, 0)
+        };
+
+        assertFalse(decide.lic10());
+    }
+
+    /**
+     * Contract: LIC 10 returns false when fewer than 5 points are provided.
+     */
+    @Test
+    void lic10_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(1, 1)
+        };
+
+        assertFalse(decide.lic10());
     }
 
     /**
@@ -390,11 +518,10 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 11 returns false when there are not enough data points
-     * to form a valid pair with G_PTS separations.
+     * Contract: LIC 11 returns false when there are fewer than 3 data points provided
      */
     @Test
-    void lic11_negativeTest_tooFewPoints() {
+    void lic11_invalidTest_tooFewPoints() {
         Decide decide = new Decide();
         decide.COORDINATES = new Point2D.Double[] {
                 new Point2D.Double(1.0, 0.0),
@@ -431,7 +558,7 @@ public class DecideTest {
 
     /**
      * Contract: LIC 12 returns false when there is no pair of points
-     * separated by K_PTS points with distance > LENGTH1
+     * separated by K_PTS points with distance > LENGTH1 or distance < LENGTH2
      */
 
     @Test
@@ -451,7 +578,7 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 12 returns false when there are too few points
+     * Contract: LIC 12 returns false when there are fewer than 3 data points provided
      */
 
     @Test
@@ -468,121 +595,130 @@ public class DecideTest {
     }
 
     /**
-     * Contract: LIC 6 returns true when at least one point in a set of N_PTS
-     * consecutive points lies further than DIST from the line joining first and last points.
+     * Contract: LIC 13 returns true when there exist three data points separated by
+     * A_PTS and B_PTS consecutive points that cannot be contained in a circle of
+     * radius RADIUS1 AND can be contained in a circle of radius RADIUS2.
      */
     @Test
-    void lic6_positiveTest_distanceLarger() {
+    void lic13_positiveTest_bothConditionsMet() {
         Decide decide = new Decide();
-        decide.N_PTS = 3;
-        decide.DIST = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(1, 3),
-                new Point2D.Double(2, 0),
-                new Point2D.Double(3, 0),
-                new Point2D.Double(4, 0)
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(5.0, 5.0)
         };
-        assertTrue(decide.lic6());
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 1.0;
+        decide.RADIUS2 = 100.0;
+        assertTrue(decide.lic13());
     }
 
     /**
-     * Contract: LIC 6 returns false when all points are within DIST from their lines.
+     * Contract: LIC 13 returns false when all valid three-point combinations
+     * can be contained in a circle of radius RADIUS1.
      */
-
     @Test
-    void lic6_negativeTest_distanceSmaller() {
+    void lic13_negativeTest_fitsInBothRadii() {
         Decide decide = new Decide();
-        decide.N_PTS = 3;
-        decide.DIST = 2.0;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(1, 1),
-                new Point2D.Double(2, 0),
-                new Point2D.Double(3, 0),
-                new Point2D.Double(4, 0)
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(5.0, 5.0)
         };
-        assertFalse(decide.lic6());
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 100.0;
+        decide.RADIUS2 = 100.0;
+        assertFalse(decide.lic13());
     }
 
     /**
-     * Contract: LIC 6 returns false when there are too few points
+     * Contract: LIC 13 returns false when there are fewer then 5 data points provided
      */
     @Test
-    void lic6_invalidTest_tooFewPoints() {
+    void lic13_invalidTest_tooFewPoints() {
         Decide decide = new Decide();
-        decide.N_PTS = 3;
-        decide.DIST = 1.0;
         decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(1, 1)
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(1.0, 1.0),
+                new Point2D.Double(2.0, 2.0),
+                new Point2D.Double(3.0, 3.0)
         };
-        decide.NUMPOINTS = decide.COORDINATES.length;
-        assertFalse(decide.lic6());
+        decide.A_PTS = 1;
+        decide.B_PTS = 1;
+        decide.RADIUS1 = 100.0;
+        decide.RADIUS2 = 100.0;
+        assertFalse(decide.lic13());
+    }
+
+    /**
+     * Contract: LIC 14 returns true when there exist three data points separated by
+     * E_PTS and F_PTS consecutive points that form a triangle with area greater
+     * than AREA1 AND less than AREA2.
+     */
+    @Test
+    void lic14_positiveTest_bothConditionsMet() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(10.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(0.0, 1.0)
+        };
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 1.0;
+        decide.AREA2 = 100.0;
+        assertTrue(decide.lic14());
+    }
+
+    /**
+     * Contract: LIC 14 returns false when no valid three-point combination forms
+     * a triangle with area greater than AREA1.
+     */
+    @Test
+    void lic14_negativeTest_areaTooSmall() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(1.0, 0.0),
+                new Point2D.Double(10000.0, 10000.0),
+                new Point2D.Double(0.0, 1.0)
+        };
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 100.0;
+        decide.AREA2 = 100.0;
+        assertFalse(decide.lic14());
+    }
+
+    /**
+     * Contract: LIC 14 returns false when there are fewer then 5 data points provided
+     */
+    @Test
+    void lic14_invalidTest_tooFewPoints() {
+        Decide decide = new Decide();
+        decide.COORDINATES = new Point2D.Double[] {
+                new Point2D.Double(0.0, 0.0),
+                new Point2D.Double(1.0, 0.0),
+                new Point2D.Double(2.0, 0.0),
+                new Point2D.Double(3.0, 0.0)
+        };
+        decide.E_PTS = 1;
+        decide.F_PTS = 1;
+        decide.AREA1 = 100.0;
+        decide.AREA2 = 100.0;
+        assertFalse(decide.lic14());
     }
 
     static class setCMVTestDecideStub extends Decide {
-        /**
-         * Contract: LIC 10 returns true when there exists at least one set of
-         * three points separated by E_PTS and F_PTS that form a triangle
-         * with area greater than AREA1.
-         */
-
-        @Test
-        void lic10_positiveTest_areaGreater() {
-            Decide decide = new Decide();
-            decide.E_PTS = 1;
-            decide.F_PTS = 1;
-            decide.AREA1 = 1.0;
-            decide.COORDINATES = new Point2D.Double[] {
-                    new Point2D.Double(0, 0),
-                    new Point2D.Double(0, 0),
-                    new Point2D.Double(4, 0),
-                    new Point2D.Double(0, 0),
-                    new Point2D.Double(0, 4)
-            };
-            assertTrue(decide.lic10());
-        }
-
-        /**
-         * Contract: LIC 10 returns false when no valid triple of points
-         * forms a triangle with area greater than AREA1.
-         */
-        @Test
-        void lic10_negativeTest_areaSmaller() {
-            Decide decide = new Decide();
-            decide.E_PTS = 1;
-            decide.F_PTS = 1;
-            decide.AREA1 = 10.0;
-
-            decide.COORDINATES = new Point2D.Double[] {
-                    new Point2D.Double(1, 1),
-                    new Point2D.Double(1, 1),
-                    new Point2D.Double(-1, 1),
-                    new Point2D.Double(-1, 1),
-                    new Point2D.Double(0, 0),
-                    new Point2D.Double(0, 0)
-            };
-
-            assertFalse(decide.lic10());
-        }
-
-        /**
-         * Contract: LIC 10 returns false when fewer than 5 points are provided.
-         */
-        @Test
-        void lic10_invalidTest_tooFewPoints() {
-            Decide decide = new Decide();
-            decide.E_PTS = 1;
-            decide.F_PTS = 1;
-            decide.AREA1 = 1.0;
-
-            decide.COORDINATES = new Point2D.Double[] {
-                    new Point2D.Double(1, 1)
-            };
-
-            assertFalse(decide.lic10());
-        }
 
         boolean[] ret = new boolean[15];
 
@@ -666,6 +802,7 @@ public class DecideTest {
      * Tests that setCMV correctly maps each LIC functions return value
      * to the corresponding index in the CMV array.
      */
+
     @Test
     void setCMV_mapsEachLICToSameIndex() {
         setCMVTestDecideStub d = new setCMVTestDecideStub();
@@ -760,71 +897,6 @@ public class DecideTest {
         }
     }
 
-    /** Contract: LIC 7 returns true when there exist two points separated by exactly K_PTS intervening points that are at a distance greater than LENGTH1. */
-    @Test
-    void lic7_positiveTest_distanceIsGreater() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(0, 0), // Gap point 1
-                new Point2D.Double(10, 10)
-        };
-        decide.K_PTS = 1;
-        decide.LENGTH1 = 5.0;
-        assertTrue(decide.lic7());
-    }
-
-    /* Contract: LIC 7 returns false when all points separated by K_PTS are at a distance less than or equal to LENGTH1. */
-    @Test
-    void lic7_negativeTest_distanceIsEqual() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(0, 0), // First gap
-                new Point2D.Double(5, 0)
-        };
-        decide.K_PTS = 1;
-        decide.LENGTH1 = 5.0;
-        assertFalse(decide.lic7());
-    }
-
-    /* Contract: LIC 8 returns true when three points separated by A_PTS and B_PTS cannot be contained within a circle of RADIUS1. */
-    @Test
-    void lic8_positiveTest_cannotFitInCircle() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(0, 0), // First gap
-                new Point2D.Double(10, 0),
-                new Point2D.Double(0, 0), // Second gap
-                new Point2D.Double(0, 10)
-        };
-        decide.A_PTS = 1;
-        decide.B_PTS = 1;
-        decide.RADIUS1 = 1.0;
-        assertTrue(decide.lic8());
-    }
-
-    /**
-     * Contract: LIC 8 returns false when all sets of points separated by
-     * A_PTS and B_PTS can be contained within a circle of RADIUS1.
-     */
-    @Test
-    void lic8_negativeTest_fitsInCircle() {
-        Decide decide = new Decide();
-        decide.COORDINATES = new Point2D.Double[] {
-                new Point2D.Double(0, 0),
-                new Point2D.Double(0, 0), // First gap
-                new Point2D.Double(1, 0),
-                new Point2D.Double(0, 0), // Second gap
-                new Point2D.Double(0, 1)
-        };
-        decide.A_PTS = 1;
-        decide.B_PTS = 1;
-        decide.RADIUS1 = 10.0;
-        assertFalse(decide.lic8());
-    }
-
     /**
      * Tests that LAUNCH is true only if all FUV are true, and false otherwise
      */
@@ -851,27 +923,27 @@ public class DecideTest {
     void decide_runsEndToEnd() {
         Decide d = new Decide();
         d.COORDINATES = new Point2D.Double[] {
-            new Point2D.Double(0, 0),
-            new Point2D.Double(1, 0),
-            new Point2D.Double(0, 1),
-            new Point2D.Double(1, 1),
+                new Point2D.Double(0, 0),
+                new Point2D.Double(1, 0),
+                new Point2D.Double(0, 1),
+                new Point2D.Double(1, 1),
 
         };
         d.NUMPOINTS = d.COORDINATES.length;
         d.Q_PTS = 2;
         d.QUADS = 1;
-        d.N_PTS = 3; 
-        d.A_PTS = 1; 
+        d.N_PTS = 3;
+        d.A_PTS = 1;
         d.B_PTS = 1;
-        d.C_PTS = 1; 
+        d.C_PTS = 1;
         d.D_PTS = 1;
-        d.E_PTS = 1; 
+        d.E_PTS = 1;
         d.F_PTS = 1;
         d.G_PTS = 1;
         d.K_PTS = 1;
         d.LENGTH2 = 2.0;
         d.RADIUS2 = 2.0;
-        d.AREA2   = 2.0;
+        d.AREA2 = 2.0;
         d.decide();
         assertTrue(d.LAUNCH); // Should be true since all LCM2 are NOTUSED
     }
